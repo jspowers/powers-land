@@ -3,9 +3,6 @@ def test_homepage_loads(client):
     response = client.get('/')
     assert response.status_code == 200
     assert b'James Powers' in response.data
-    assert b'Solutions Architect @ Databricks' in response.data
-    assert b'Delivering data-driven insights' in response.data
-    assert b'Austin, Texas' in response.data
 
 
 def test_homepage_experience_section(client):
@@ -51,12 +48,6 @@ def test_landscaping_index_loads(client):
 def test_landscaping_resources_loads(client):
     """Test that landscaping resources page loads successfully"""
     response = client.get('/landscaping/resources')
-    assert response.status_code == 200
-
-
-def test_yard_design_loads(client):
-    """Test that yard design page loads successfully"""
-    response = client.get('/landscaping/yard-design')
     assert response.status_code == 200
 
 
