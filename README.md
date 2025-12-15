@@ -124,76 +124,61 @@ pytest tests/integration/test_routes.py -v
 pytest tests/ --cov=app
 ```
 
-## AWS Deployment
+## AWS Deployment (Fully Automated with Terraform)
 
 ### Prerequisites
 
-1. **AWS Account** with EC2 and Route 53 access
-2. **SSH Key Pair** created in AWS Console (EC2 → Key Pairs)
-3. **Terraform** installed (`brew install terraform` on macOS)
-4. **AWS CLI** installed and configured (`aws configure`)
+1. **AWS Account** with credentials configured (`aws configure`)
+2. **SSH Key Pair** created in AWS Console and saved locally
+3. **Route 53 Hosted Zone** for your domain
+4. **Terraform** installed (`brew install terraform` on macOS)
 
-### Deployment Steps
+### Quick Deploy (Everything Automated!)
 
-1. **Create Terraform variables file**:
-   ```bash
-   cd terraform
-   cp terraform.tfvars.example terraform.tfvars
-   # Edit terraform.tfvars with your values
-   ```
+```bash
+# 1. Navigate to terraform directory
+cd terraform
 
-2. **Initialize Terraform**:
-   ```bash
-   terraform init
-   ```
+# 2. Create your variables file
+cp terraform.tfvars.example terraform.tfvars
 
-3. **Review infrastructure plan**:
-   ```bash
-   terraform plan
-   ```
+# 3. Edit with your values
+# - Get your IP: curl ifconfig.me
+# - Generate secret: python3 -c "import secrets; print(secrets.token_urlsafe(32))"
+# - Add your email for SSL notifications
 
-4. **Apply infrastructure**:
-   ```bash
-   terraform apply
-   # Note the Elastic IP from outputs
-   ```
+# 4. Deploy everything!
+terraform init
+terraform apply
+```
 
-5. **Configure Route 53 DNS**:
-   - Go to AWS Route 53 → Hosted Zones → powers.land
-   - Create A record pointing to Elastic IP
-   - Wait for DNS propagation (15-30 minutes)
+**That's it!** Terraform automatically:
+- ✅ Creates EC2 instance with Ubuntu 24.04
+- ✅ Assigns static Elastic IP
+- ✅ Configures security groups
+- ✅ Sets up Route 53 DNS records
+- ✅ Clones your repository
+- ✅ Installs all dependencies
+- ✅ Runs database migrations
+- ✅ Configures Gunicorn + Nginx
+- ✅ Obtains Let's Encrypt SSL certificate
+- ✅ Starts all services
 
-6. **SSH into EC2 instance**:
-   ```bash
-   ssh -i ~/.ssh/powers-land-key.pem ubuntu@<elastic-ip>
-   ```
+After ~5 minutes, your site is live at `https://powers.land`!
 
-7. **Switch to application user and setup**:
-   ```bash
-   sudo su - powers-land
-   cd /var/www/powers-land
-   git clone <repository-url> .
-   python3.11 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   flask db upgrade
-   exit
-   ```
+### Destroying and Recreating
 
-8. **Start the application**:
-   ```bash
-   sudo systemctl enable powers-land
-   sudo systemctl start powers-land
-   sudo systemctl status powers-land
-   ```
+To tear down everything:
+```bash
+terraform destroy
+```
 
-9. **Configure SSL certificate**:
-   ```bash
-   sudo certbot --nginx -d powers.land -d www.powers.land
-   ```
+To rebuild from scratch:
+```bash
+terraform apply  # Uses latest code from GitHub
+```
 
-10. **Verify deployment**:
-    Visit `https://powers.land`
+See [terraform/README.md](terraform/README.md) for detailed documentation.
 
 ## GitHub Actions CI/CD
 

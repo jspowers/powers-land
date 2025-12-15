@@ -104,3 +104,57 @@ resource "aws_eip" "web" {
     Project = "powers-land"
   }
 }
+
+# Get existing Route 53 Hosted Zone
+data "aws_route53_zone" "main" {
+  name         = "${var.domain_name}."
+  private_zone = false
+}
+
+# DNS A Record for root domain
+resource "aws_route53_record" "root" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = var.domain_name
+  type    = "A"
+  ttl     = 300
+  records = [aws_eip.web.public_ip]
+}
+
+# DNS A Record for www subdomain
+resource "aws_route53_record" "www" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "www.${var.domain_name}"
+  type    = "A"
+  ttl     = 300
+  records = [aws_eip.web.public_ip]
+}
+
+# Wait for instance to be ready and SSL to be configured
+resource "null_resource" "configure_ssl" {
+  depends_on = [
+    aws_instance.web,
+    aws_eip.web,
+    aws_route53_record.root,
+    aws_route53_record.www
+  ]
+
+  # Only run if SSL email is provided
+  count = var.ssl_email != "" ? 1 : 0
+
+  # Wait for DNS propagation and configure SSL
+  provisioner "local-exec" {
+    command = <<-EOT
+      echo "Waiting 60 seconds for DNS propagation..."
+      sleep 60
+      echo "Configuring SSL certificate..."
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/${var.key_name}.pem ubuntu@${aws_eip.web.public_ip} \
+        "sudo certbot --nginx -d ${var.domain_name} -d www.${var.domain_name} \
+         --non-interactive --agree-tos --email ${var.ssl_email} --redirect"
+    EOT
+  }
+
+  triggers = {
+    instance_id = aws_instance.web.id
+    eip         = aws_eip.web.public_ip
+  }
+}

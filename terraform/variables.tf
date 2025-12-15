@@ -31,3 +31,9 @@ variable "app_secret_key" {
   type        = string
   sensitive   = true
 }
+
+variable "ssl_email" {
+  description = "Email address for Let's Encrypt SSL certificate (leave empty to skip SSL configuration)"
+  type        = string
+  default     = ""
+}
