@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Yard Design - Texas Native Landscaping{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1">My Yard Design</h1>
+        <p class="subtitle">A showcase of my Texas native plant landscape</p>
+
+        <div class="content is-medium mb-6">
+            <p>
+                This is my native plant landscape design, featuring drought-tolerant Texas native plants that provide year-round beauty while supporting local wildlife.
+            </p>
+        </div>
+
+        <!-- Yard Design Image -->
+        <div class="columns is-centered">
+            <div class="column is-10">
+                <div class="image-container">
+                    <figure class="image">
+                        <img src="{{ url_for('static', filename='images/yard/design.png') }}"
+                             alt="Texas Native Plant Yard Design">
+                    </figure>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Details (can be expanded later) -->
+        <div class="content is-medium mt-6">
+            <h2>Design Philosophy</h2>
+            <p>
+                My landscape design focuses on creating a sustainable, low-maintenance garden that thrives in Central Texas conditions. By using plants native to the region, the garden requires minimal watering once established and provides critical habitat for local pollinators and wildlife.
+            </p>
+
+            <h3>Key Features</h3>
+            <ul>
+                <li>Drought-tolerant native species adapted to Texas heat</li>
+                <li>Pollinator-friendly blooms throughout the growing season</li>
+                <li>Layered planting design with trees, shrubs, perennials, and groundcovers</li>
+                <li>Water-wise irrigation and rainwater harvesting</li>
+                <li>Organic mulch to retain moisture and suppress weeds</li>
+            </ul>
+
+            <p class="mt-5">
+                <em>Future updates will include detailed plant lists, seasonal photos, and care logs as I expand the interactive plant database feature.</em>
+            </p>
+        </div>
+
+        <div class="buttons mt-6">
+            <a href="{{ url_for('landscaping.index') }}" class="button is-primary">Back to Landscaping</a>
+            <a href="{{ url_for('landscaping.resources') }}" class="button is-light">View Resources</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

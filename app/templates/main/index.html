@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}James Powers - Solutions Architect{% endblock %}
+
+{% block content %}
+<!-- Hero/Intro Section -->
+<section class="section hero-section">
+    <div class="container">
+        <div class="columns ">
+            <div class="column is-5 is-flex is-flex-direction-column">
+                <h1 class="title has-text-white is-3 mb-1">James Powers</h1>
+                <h2 class="subtitle is-5 has-text-weight-normal mb-2">Solutions Architect @ Databricks</h2>
+                <p class="is-size-6 mb-4">Austin, Texas</p>
+                <p class="is-size-6 mb-6 is-family-monospace has-text-primary">delivering data as best I can</p>        
+                <div class="is-flex is-justify-content-center">
+                <figure class="image is-128x128">
+                    <img class="is-rounded" src="{{ url_for('static', filename='images/profile/headshot.jpeg') }}">
+                </figure>
+                </div>
+                <div class="buttons mt-auto">
+
+                    <a href="mailto:jspowers11@gmail.com" class="button is-light">Email</a>
+                    <a href="https://www.linkedin.com/in/jamesspowers/" target="_blank"
+                        class="button is-light">LinkedIn</a>
+                    <a href="https://github.com/jspowers" target="_blank" class="button is-light">GitHub</a>
+                </div>
+            </div>
+
+            <!-- About Section -->
+            <div class="column is-7">
+                <h2 class="is-size-4 is-family-secondary mb-4">About</h2>
+                <div class="content">
+                    <p>
+                        An experienced analytics specialist with a track record for delivering data-driven insights and
+                        implementing digital transformation strategies for Fortune 50 companies. Deeply passionate about
+                        leveraging skills to solve complex problems and constantly learning new technical skills.
+                    </p>
+                    <p>
+                        Currently working as a Solutions Architect at Databricks, where I apply my background in data
+                        engineering, analytics engineering, and large-scale ETL orchestration to guide teams on best
+                        practices for ingestion, modeling, orchestration, and governance.
+                    </p>
+                    <p>
+                        I graduated from Texas A&M University with a Bachelor's Degree in Management Information
+                        Systems, which provided the perfect foundation for my career at the intersection of business and
+                        technology.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+
+<!-- Experience Section -->
+<section class="section experience-section">
+    <div class="container">
+        <h2 class="title is-3 mb-5">Experience</h2>
+
+        <div class="columns is-multiline">
+            <!-- Databricks -->
+            <div class="column is-4">
+                <div class="experience-item">
+                    <h3 class="title is-5 mb-2">Solutions Architect</h3>
+                    <p class="subtitle is-6 mb-3">Databricks • Aug 2025 - Present</p>
+                    <ul class="experience-list">
+                        <li>Guiding teams on best practices for data ingestion, modeling, orchestration, and governance
+                        </li>
+                        <li>Applying expertise in data engineering and large-scale ETL orchestration</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Meta -->
+            <div class="column is-4">
+                <div class="experience-item">
+                    <h3 class="title is-5 mb-2">Sr Analytics Engineer</h3>
+                    <p class="subtitle is-6 mb-3">Meta | 2020 - 2025</p>
+                    <ul class="experience-list">
+                        <li>Designed semantic layer using SQL (Presto), Python, and Apache Airflow</li>
+                        <li>Built data pipelines to migrate and cleanse data of all qualities and sizes</li>
+                        <li>Created infrastructure to support self-service analytics</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Deloitte -->
+            <div class="column is-4">
+                <div class="experience-item">
+                    <h3 class="title is-5 mb-2">Senior Analytics Consultant</h3>
+                    <p class="subtitle is-6 mb-3">Deloitte • Jul 2017 - Mar 2020</p>
+                    <ul class="experience-list">
+                        <li>Risk and Financial Advisory practice</li>
+                        <li>Digital Supply Chain Analytics, Operational Reporting, Data Auditing</li>
+                        <li>Energy & Resources and Financial Services sectors</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section class="section skills-section">
+    <div class="container">
+        <h2 class="title is-3 mb-5">Technical Skills</h2>
+        <div class="box" style="background-color: #24292e; --bulma-box-shadow: none; --bulma-box-padding: 1rem;">
+            <div class="columns is-multiline is-family-code is-size-7">
+                <div class="column is-3">
+                    <ul>
+                        <li>SQL</li>
+                        <li>Python</li>
+                        <li>Apache Airflow</li>
+                        <li>Apache Spark</li>
+                    </ul>
+                </div>
+                <div class="column is-3">
+                    <ul>
+                        
+                        <li>Data Modeling</li>
+                        <li>Data Architecture</li>
+                        <li>Data Governance</li>
+                        <li>ETL Orchestration</li>
+                    </ul>
+                </div>
+                <div class="column is-3">
+                    <ul>
+                        <li>Tableau</li>
+                        <li>ThoughtSpot</li>
+                        <li>Data Visualization</li>
+                        <li>Data Architecture</li>
+                    </ul>
+                </div>
+                <div class="column is-3">
+                    <ul>
+                        <li>Data Engineering</li>
+                        <li>Cloud Computing</li>
+                        <li>Distributed Computing</li>
+                        <li>Cloud Data Platforms</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Certifications Section -->
+<section class="section certifications-section ">
+    <div class="container mb-6">
+        <h2 class="title is-3 mb-4">Certifications</h2>
+        <div class="box">
+            <h3 class="is-size-4 mb-2">Databricks Certified Data Engineer Associate</h3>
+            <p class="is-size-6">Issued: November 2025 • Expires: November 2027</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

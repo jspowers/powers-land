@@ -1,0 +1,133 @@
+/* Custom styles for powers.land - Minimal Professional Theme */
+
+:root {
+    --primary-dark: #2c3e50;
+    --primary-light: #34495e;
+    --accent: #3498db;
+    --text-dark: #141d25;
+    --text-light: #c5c8c8;
+    --border-light: #ecf0f1;
+}
+
+/* Override Bulma container max-width to 1000px */
+.container {
+    max-width: 800px !important;
+}
+
+/* Ensure footer stays at bottom */
+html,
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Reduce section padding for denser layout */
+.section {
+    padding: 2rem 1.5rem;
+}
+
+/* Hero section - minimal, clean */
+.hero-section {
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+}
+
+/* About section */
+.about-section {
+    background-color: #fafafa;
+}
+
+/* Experience items */
+.experience-item {
+    margin-bottom: 1.5rem;
+}
+
+.experience-item .title {
+    margin-bottom: 0.5rem;
+}
+
+.experience-item .subtitle {
+    color: var(--text-light);
+}
+
+.experience-list {
+    list-style: disc;
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.experience-list li {
+    margin-bottom: 0.25rem;
+}
+
+.navbar-dropdown {
+    background-color: hsl(0, 0%, 96%);
+}
+
+.navbar-dropdown a.navbar-item:not(.is-active, .is-selected) {
+    background-color: hsl(0, 0%, 96%);
+    color: hsl(0, 0%, 7%);
+}
+
+/* Skills section */
+.skill-tag {
+    background-color: #f5f5f5;
+    border: 1px solid var(--border-light);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+/* Certifications section */
+.certifications-section .box {}
+
+/* Navbar - minimal styling */
+.navbar-brand strong {
+    color: var(--primary-dark);
+    font-size: 1.25rem;
+}
+
+/* Footer - minimal */
+.footer {
+    background-color: #fafafa;
+    padding: 2rem 1.5rem;
+    border-top: 1px solid var(--border-light);
+}
+
+/* Landscaping section theming (for projects page) */
+.landscaping-hero {
+    background: linear-gradient(135deg, #5a6c57 0%, #7d8f7a 100%);
+}
+
+/* Responsive image containers */
+.image-container {
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+/* Mobile optimizations */
+@media screen and (max-width: 768px) {
+    .section {
+        padding: 1.5rem 1rem;
+    }
+
+    .hero-section {
+        padding-top: 2rem;
+    }
+
+    .title.is-1 {
+        font-size: 2rem;
+    }
+
+    .subtitle.is-3 {
+        font-size: 1.25rem;
+    }
+}

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Texas Native Landscaping - powers.land{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero landscaping-hero is-small">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <h1 class="title is-1 has-text-white">Texas Native Landscaping</h1>
+            <h2 class="subtitle is-3 has-text-white">Sustainable Gardening with Native Plants</h2>
+        </div>
+    </div>
+</section>
+
+<!-- Introduction -->
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-10 is-offset-1">
+                <div class="content is-medium">
+                    <h2>Why Texas Native Plants?</h2>
+                    <p>
+                        Texas native plants are adapted to our local climate, soil, and wildlife. They require less water, fewer pesticides, and minimal maintenance while providing habitat for pollinators, birds, and other beneficial wildlife.
+                    </p>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yard Design Image -->
+
+    <div class="container">
+    <figure class="image">
+        <img src="{{ url_for('static', filename='images/yard/dull_knife.png') }}"
+                alt="Texas Native Plant Yard Design">
+    </figure>
+    </div>
+
+</section>
+
+<!-- Quick Links -->
+<section class="section has-background-light">
+    <div class="container">
+        <div class="columns is-multiline">
+            <div class="column is-half">
+                <div class="card">
+                    <div class="card-content">
+                        <h3 class="title is-size-4">Plant Resources</h3>
+                        <p>Discover my favorite websites, guides, and nurseries for Texas native plants.</p>
+                        <a href="{{ url_for('landscaping.resources') }}" class="button is-primary is-fullwidth mt-4">
+                            View Resources
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-half">
+                <div class="card">
+                    <div class="card-content">
+                        <h3 class="title is-size-4">What's in my yard?</h3>
+                        <p>Interactive plant database with care info and filtering.</p>
+                        <button class="button is-light is-fullwidth mt-4" disabled>
+                            Coming Soon
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Benefits -->
+<section class="section">
+    <div class="container">
+        <h2 class="title is-2 has-text-centered mb-6">Benefits of Native Landscaping</h2>
+        <div class="columns is-multiline">
+            <div class="column is-one-third">
+                <div class="box has-text-centered">
+                    <h4 class="title is-4">Water Conservation</h4>
+                    <p>Native plants are drought-tolerant once established, reducing water usage by up to 50%.</p>
+                </div>
+            </div>
+            <div class="column is-one-third">
+                <div class="box has-text-centered">
+                    <h4 class="title is-4">Wildlife Habitat</h4>
+                    <p>Support pollinators, birds, and beneficial insects with plants they've evolved alongside.</p>
+                </div>
+            </div>
+            <div class="column is-one-third">
+                <div class="box has-text-centered">
+                    <h4 class="title is-4">Low Maintenance</h4>
+                    <p>Once established, native plants require minimal fertilizer, pesticides, or special care.</p>
+                </div>
+            </div>
+            <div class="column is-one-third">
+                <div class="box has-text-centered">
+                    <h4 class="title is-4">Year-Round Beauty</h4>
+                    <p>Native plants provide seasonal interest with blooms, foliage, and berries throughout the year.</p>
+                </div>
+            </div>
+            <div class="column is-one-third">
+                <div class="box has-text-centered">
+                    <h4 class="title is-4">Soil Health</h4>
+                    <p>Deep root systems prevent erosion and improve soil structure and water infiltration.</p>
+                </div>
+            </div>
+            <div class="column is-one-third">
+                <div class="box has-text-centered">
+                    <h4 class="title is-4">Climate Resilience</h4>
+                    <p>Adapted to Texas heat, cold, and variable rainfall patterns.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

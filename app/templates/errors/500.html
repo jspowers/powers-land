@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - powers.land{% endblock %}
+
+{% block content %}
+<section class="hero is-danger is-fullheight-with-navbar">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <h1 class="title is-1">500</h1>
+            <h2 class="subtitle is-3">Internal Server Error</h2>
+            <p class="mb-5">Something went wrong on our end. Please try again later.</p>
+            <a href="{{ url_for('main.index') }}" class="button is-light">Go Home</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

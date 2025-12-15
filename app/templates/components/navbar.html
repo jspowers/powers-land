@@ -1,0 +1,42 @@
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="{{ url_for('main.index') }}">
+                <strong>powers.land</strong>
+            </a>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarMain" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="{{ url_for('main.index') }}">Home</a>
+
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        Projects
+                    </a>
+                    <div class="navbar-dropdown">
+                        <!-- <hr class="navbar-divider"> -->
+                        <a class="navbar-item" href="{{ url_for('landscaping.index') }}">
+                            Landscaping
+                        </a>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a href="https://www.linkedin.com/in/jamesspowers/" target="_blank" class="navbar-item">LinkedIn</a>
+                    <a href="https://github.com/jspowers" target="_blank" class="navbar-item">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

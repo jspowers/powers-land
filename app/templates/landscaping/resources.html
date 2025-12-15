@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Plant Resources - Texas Native Landscaping{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1">Texas Native Plant Resources</h1>
+        <p class="subtitle">A curated collection of helpful websites, guides, and nurseries</p>
+
+        <div class="content is-medium">
+            <p class="mb-6">
+                These are my go-to resources for learning about and sourcing Texas native plants. Whether you're just starting out or looking to expand your native garden, these resources provide valuable information and quality plants.
+            </p>
+        </div>
+
+        <!-- Resources will be populated here -->
+        <div class="box resource-card">
+            <h3 class="title is-4">Resources Coming Soon</h3>
+            <p>I'm currently compiling my favorite plant resources. Check back soon for links to nurseries, guides, and helpful websites!</p>
+        </div>
+
+        <!-- Template for future resources (commented out for now) -->
+        <!--
+        <div class="columns is-multiline">
+            <div class="column is-half">
+                <div class="box resource-card">
+                    <h3 class="title is-4">Resource Title</h3>
+                    <p class="subtitle is-6">Resource Type</p>
+                    <div class="content">
+                        <p>Description of the resource and why it's valuable.</p>
+                    </div>
+                    <a href="#" target="_blank" class="button is-primary">Visit Website</a>
+                </div>
+            </div>
+        </div>
+        -->
+
+        <div class="content mt-6">
+            <h2>Resource Categories</h2>
+            <p>When complete, this page will include:</p>
+            <ul>
+                <li><strong>Local Nurseries</strong> - Austin-area sources for native plants</li>
+                <li><strong>Educational Resources</strong> - Organizations promoting native landscaping</li>
+                <li><strong>Books & Publications</strong> - Recommended reading for Texas gardeners</li>
+            </ul>
+        </div>
+
+        <div class="buttons mt-6">
+            <a href="{{ url_for('landscaping.index') }}" class="button is-primary">Back to Landscaping Home</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

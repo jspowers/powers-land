@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}About - James Powers{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-8 is-offset-2">
+                <h1 class="title is-1">About James Powers</h1>
+
+                <div class="content is-medium">
+                    <h2>Professional Background</h2>
+                    <p>
+                        With over 8 years of experience in data analytics and engineering, I've had the privilege of working with some of the world's leading technology companies and consulting firms. My career has been focused on turning complex data into actionable insights and building scalable data infrastructure.
+                    </p>
+
+                    <h3>Current Role</h3>
+                    <p>
+                        As a <strong>Solutions Architect at Databricks</strong>, I leverage my deep experience in data engineering, analytics engineering, and ETL orchestration to help organizations build modern data platforms. I guide teams on best practices for data ingestion, modeling, orchestration, and governance.
+                    </p>
+
+                    <h3>Meta Experience (5+ Years)</h3>
+                    <p>
+                        During my time at Meta, I served as a <strong>Senior Analytics Engineer</strong>, where I:
+                    </p>
+                    <ul>
+                        <li>Designed and established semantic layers using SQL (Presto engine), Python, and Meta Dataswarm (Apache Airflow)</li>
+                        <li>Built robust data pipelines to migrate and cleanse data of all qualities and sizes</li>
+                        <li>Created infrastructure to support self-service analytics across the organization</li>
+                    </ul>
+
+                    <h3>Consulting at Deloitte</h3>
+                    <p>
+                        At Deloitte's Risk and Financial Advisory practice, I worked as a <strong>Senior Analytics Consultant</strong>, providing expertise across:
+                    </p>
+                    <ul>
+                        <li>Digital Supply Chain Analytics</li>
+                        <li>Operational Reporting and Data Auditing</li>
+                        <li>SaaS Application Development</li>
+                        <li>Fraud and Forensic Investigations</li>
+                    </ul>
+                    <p>
+                        My work primarily focused on the Energy & Resources and Financial Services sectors.
+                    </p>
+
+                    <h3>Education</h3>
+                    <p>
+                        I graduated from <strong>Texas A&M University</strong> with a Bachelor's Degree in <strong>Management Information Systems</strong>, which provided the perfect foundation for my career at the intersection of business and technology.
+                    </p>
+
+                    <h3>Philosophy</h3>
+                    <p>
+                        I believe in delivering data-driven insights that create real business value. I'm constantly learning and exploring new technologies, always striving to stay at the forefront of the rapidly evolving data landscape.
+                    </p>
+
+                    <h3>Beyond Work</h3>
+                    <p>
+                        Outside of my professional life, I'm passionate about <a href="{{ url_for('landscaping.index') }}">Texas native landscaping</a> and sustainable gardening practices. I believe in creating beautiful outdoor spaces that work with nature, not against it.
+                    </p>
+
+                    <div class="buttons">
+                        <a href="{{ url_for('main.index') }}" class="button is-primary">Back to Home</a>
+                        <a href="https://www.linkedin.com/in/jamesspowers/" target="_blank" class="button is-info">View LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
