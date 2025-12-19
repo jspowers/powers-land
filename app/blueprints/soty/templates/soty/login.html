@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Song of the Year{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <div class="box">
+                    <h1 class="title has-text-centered">Song of the Year 2024</h1>
+                    <h2 class="subtitle has-text-centered">Enter Your PIN</h2>
+
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="field">
+                            <label class="label">4-Digit PIN</label>
+                            <div class="control">
+                                <input class="input is-large has-text-centered"
+                                       type="number"
+                                       name="pin"
+                                       placeholder="0000"
+                                       min="0"
+                                       max="9999"
+                                       required
+                                       autofocus>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" class="button is-primary is-fullwidth is-large">
+                                    Login
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="mt-4" style="color:red; text-align: center;">
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <ul>
+                                {% for message in messages %}
+                                <li>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="has-text-centered mt-4">
+                        <a href="{{ url_for('soty.index') }}" class="button is-text">
+                            Back to Homepage
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

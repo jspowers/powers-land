@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Song of the Year 2024 - powers.land{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1 has-text-centered">Song of the Year 2024</h1>
+
+        <!-- Access Bracket Button -->
+        <div class="has-text-centered mb-5">
+            {% if current_user %}
+                <div class="buttons is-centered">
+                    <a href="{{ url_for('soty.bracket') }}" class="button is-primary is-large">
+                        View Tournament Bracket
+                    </a>
+                    {% if current_user.admin %}
+                        <a href="{{ url_for('soty.build_bracket') }}" class="button is-info is-large">
+                            Admin: Build/Reset Bracket
+                        </a>
+                    {% endif %}
+                </div>
+                <p class="help mt-2">
+                    Logged in as <strong>{{ current_user.first_name }}</strong>{% if current_user.admin %} <span class="tag is-success is-small">Admin</span>{% endif %} |
+                    <a href="{{ url_for('soty.logout') }}">Logout</a>
+                </p>
+            {% else %}
+                <button class="button is-light is-large" disabled>
+                    <span>View Bracket (Login Required)</span>
+                </button>
+                <p class="help mt-2">
+                    <a href="{{ url_for('soty.login') }}">Login with PIN</a> to access the bracket
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- Active Round Indicator -->
+        {% if active_round %}
+        <div class="notification is-info has-text-centered">
+            <strong>{{ active_round.name }}</strong> is currently active!
+            {% if active_round.end_date %}
+                Voting closes: {{ active_round.end_date | timestamp_to_date }}
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Songs Grid (Card-based like manage_clues.html) -->
+        <h2 class="title is-3 mt-6">All Songs</h2>
+
+        {% if songs %}
+            {% for song in songs %}
+            <div class="card mb-3">
+                <div class="card-content" style="padding: 1rem;">
+                    <div class="columns is-vcentered is-mobile">
+                        <!-- Album Artwork -->
+                        <div class="column is-narrow">
+                            <figure class="image is-96x96">
+                                {% if song.artwork_url %}
+                                    <img src="{{ song.artwork_url }}" alt="{{ song.title }} artwork">
+                                {% else %}
+                                    <div style="width: 96px; height: 96px; background-color: #f5f5f5;"></div>
+                                {% endif %}
+                            </figure>
+                        </div>
+
+                        <!-- Song Details -->
+                        <div class="column">
+                            <p class="title is-5 mb-1">{{ song.title }}</p>
+                            <p class="subtitle is-6 mb-2">{{ song.artist }}</p>
+
+                            <div class="is-family-code is-size-7">
+                                <div class="columns is-mobile is-multiline" style="margin-bottom: 0;">
+                                    <div class="column is-half-mobile is-one-third-tablet">
+                                        <strong>Album:</strong> {{ song.album or 'N/A' }}
+                                    </div>
+                                    <div class="column is-half-mobile is-one-third-tablet">
+                                        <strong>Release:</strong> {{ song.release_date or 'N/A' }}
+                                    </div>
+                                    <div class="column is-half-mobile is-one-third-tablet">
+                                        <strong>Popularity:</strong> {{ song.popularity or 'N/A' }}
+                                    </div>
+                                    {% if song.seed_number %}
+                                    <div class="column is-half-mobile is-one-third-tablet">
+                                        <strong>Seed:</strong> #{{ song.seed_number }}
+                                    </div>
+                                    {% endif %}
+                                    <div class="column is-half-mobile is-one-third-tablet">
+                                        <strong>Round Reached:</strong> {{ song.max_round_reached }}
+                                    </div>
+                                    <div class="column is-half-mobile is-one-third-tablet">
+                                        {% if song.is_alive %}
+                                            <span class="tag is-success is-small">Still Alive</span>
+                                        {% else %}
+                                            <span class="tag is-danger is-small">Eliminated</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="notification is-warning">
+                <p>No songs have been loaded yet. Please contact an administrator.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

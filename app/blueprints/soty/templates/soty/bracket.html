@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}Tournament Bracket - Song of the Year{% endblock %}
+
+{% block extra_css %}
+<style>
+    .vote-button {
+        transition: all 0.2s;
+    }
+    .vote-button.selected {
+        transform: scale(1.02);
+    }
+    .matchup-card {
+        border-left: 3px solid transparent;
+    }
+    .matchup-card.user-voted {
+        border-left-color: #48c774;
+    }
+    .round-content {
+        display: none;
+    }
+    .round-content.is-active {
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1">Tournament Bracket</h1>
+
+        <!-- User Info -->
+        <div class="level mb-5">
+            <div class="level-left">
+                <div class="level-item">
+                    <p>Welcome, <strong>{{ current_user.first_name }}</strong></p>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <a href="{{ url_for('soty.index') }}" class="button is-light mr-2">Back to Songs</a>
+                    <a href="{{ url_for('soty.logout') }}" class="button is-light">Logout</a>
+                </div>
+            </div>
+        </div>
+
+        {% if is_admin %}
+        <div class="notification is-info">
+            <p><strong>Admin Controls:</strong> You can finalize rounds and extend deadlines below.</p>
+        </div>
+        {% endif %}
+
+        {% if not rounds_data %}
+        <div class="notification is-warning">
+            <p>No rounds have been created yet.</p>
+            {% if is_admin %}
+                <p class="mt-3">
+                    <a href="{{ url_for('soty.build_bracket') }}" class="button is-primary">
+                        Build Tournament Bracket
+                    </a>
+                </p>
+            {% endif %}
+        </div>
+        {% else %}
+
+        <!-- Round Tabs -->
+        <div class="tabs is-boxed is-medium">
+            <ul>
+                {% for rd in rounds_data %}
+                <li class="{% if rd.is_active %}is-active{% endif %}" data-target="round-{{ rd.round.round_number }}">
+                    <a>
+                        <span>{{ rd.round.name }}</span>
+                        {% if rd.round.status == 'completed' %}
+                            <span class="tag is-success ml-2 is-small">Completed</span>
+                        {% elif rd.round.status == 'active' %}
+                            <span class="tag is-info ml-2 is-small">Active</span>
+                        {% else %}
+                            <span class="tag is-light ml-2 is-small">Pending</span>
+                        {% endif %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Round Content -->
+        {% for rd in rounds_data %}
+        <div id="round-{{ rd.round.round_number }}" class="round-content {% if rd.is_active %}is-active{% endif %}">
+            <div class="box" style="background-color: #24292e;">
+                <h2 class="title is-3">{{ rd.round.name }}</h2>
+
+                <!-- Round Info -->
+                <div class="notification is-light">
+                    <div class="columns">
+                        <div class="column">
+                            <p><strong>Status:</strong> {{ rd.round.status | title }}</p>
+                        </div>
+                        {% if rd.round.start_date %}
+                        <div class="column">
+                            <p><strong>Started:</strong> {{ rd.round.start_date | timestamp_to_date }}</p>
+                        </div>
+                        {% endif %}
+                        {% if rd.round.end_date %}
+                        <div class="column">
+                            <p><strong>Deadline:</strong> {{ rd.round.end_date | timestamp_to_date }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Admin Controls -->
+                {% if is_admin %}
+                <div class="box mb-4" style="background-color: #1a1d21;">
+                    <h4 class="title is-5">Admin Controls</h4>
+                    <div class="buttons">
+                        {% if rd.round.status == 'active' %}
+                            <form method="POST" action="{{ url_for('soty.finalize_round', round_id=rd.round.id) }}" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="button is-primary" onclick="return confirm('Are you sure you want to finalize this round? This cannot be undone.');">
+                                    Finalize {{ rd.round.name }}
+                                </button>
+                            </form>
+
+                            <form method="POST" action="{{ url_for('soty.extend_round', round_id=rd.round.id) }}" style="display:inline;" class="is-flex">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="number" name="extension_hours" value="24" min="1" max="168" class="input mr-2" style="width:80px;">
+                                <button type="submit" class="button is-warning">Extend by Hours</button>
+                            </form>
+                        {% else %}
+                            <button class="button is-light" disabled>Round {{ rd.round.status | title }}</button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Matchups -->
+                {% if rd.matchups %}
+                    {% for m in rd.matchups %}
+                    <div class="card mb-3 matchup-card {% if m.user_vote %}user-voted{% endif %}" style="background-color: #2a2e33;">
+                        <div class="card-content">
+                            <div class="columns is-vcentered">
+                                <!-- Song 1 -->
+                                <div class="column is-5">
+                                    {% if m.song1 %}
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <figure class="image is-64x64">
+                                                {% if m.song1.artwork_url %}
+                                                    <img src="{{ m.song1.artwork_url }}" alt="{{ m.song1.title }}">
+                                                {% else %}
+                                                    <div style="width: 64px; height: 64px; background-color: #3a3e43;"></div>
+                                                {% endif %}
+                                            </figure>
+                                        </div>
+                                        <div class="media-content">
+                                            <p class="title is-5">{{ m.song1.title }}</p>
+                                            <p class="subtitle is-6">{{ m.song1.artist }}</p>
+                                            <p class="help">Seed: #{{ m.song1.seed_number }}</p>
+                                        </div>
+                                    </div>
+
+                                    {% if rd.is_voting_open and m.song2 %}
+                                        <button class="button vote-button is-fullwidth mt-2 {% if m.user_vote == m.song1.id %}is-primary selected{% else %}is-light{% endif %}"
+                                                data-matchup-id="{{ m.matchup.id }}"
+                                                data-song-id="{{ m.song1.id }}">
+                                            Vote for {{ m.song1.title }}
+                                        </button>
+                                    {% endif %}
+
+                                    <!-- Vote counts and voter names (only show after round completes) -->
+                                    {% if rd.round.status == 'completed' and m.song2 %}
+                                        <div class="mt-2">
+                                            <p class="help has-text-centered"><strong>{{ m.song1_votes }}</strong> vote{% if m.song1_votes != 1 %}s{% endif %}</p>
+                                            {% if m.song1_voters %}
+                                                <p class="is-family-code is-size-7 has-text-centered has-text-grey-light">
+                                                    {{ m.song1_voters | join(', ') }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                    {% elif not m.song2 %}
+                                        <p class="help has-text-centered mt-2 has-text-success"><strong>BYE ROUND</strong></p>
+                                    {% endif %}
+                                    {% else %}
+                                    <p class="has-text-grey-light">TBD</p>
+                                    {% endif %}
+                                </div>
+
+                                <!-- VS Divider -->
+                                <div class="column is-2 has-text-centered">
+                                    {% if m.song2 %}
+                                        <p class="title is-3 has-text-grey-light">VS</p>
+                                    {% else %}
+                                        <p class="title is-5 has-text-success">BYE</p>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Song 2 -->
+                                <div class="column is-5">
+                                    {% if m.song2 %}
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <figure class="image is-64x64">
+                                                {% if m.song2.artwork_url %}
+                                                    <img src="{{ m.song2.artwork_url }}" alt="{{ m.song2.title }}">
+                                                {% else %}
+                                                    <div style="width: 64px; height: 64px; background-color: #3a3e43;"></div>
+                                                {% endif %}
+                                            </figure>
+                                        </div>
+                                        <div class="media-content">
+                                            <p class="title is-5">{{ m.song2.title }}</p>
+                                            <p class="subtitle is-6">{{ m.song2.artist }}</p>
+                                            <p class="help">Seed: #{{ m.song2.seed_number }}</p>
+                                        </div>
+                                    </div>
+
+                                    {% if rd.is_voting_open %}
+                                        <button class="button vote-button is-fullwidth mt-2 {% if m.user_vote == m.song2.id %}is-primary selected{% else %}is-light{% endif %}"
+                                                data-matchup-id="{{ m.matchup.id }}"
+                                                data-song-id="{{ m.song2.id }}">
+                                            Vote for {{ m.song2.title }}
+                                        </button>
+                                    {% endif %}
+
+                                    <!-- Vote counts and voter names (only show after round completes) -->
+                                    {% if rd.round.status == 'completed' %}
+                                        <div class="mt-2">
+                                            <p class="help has-text-centered"><strong>{{ m.song2_votes }}</strong> vote{% if m.song2_votes != 1 %}s{% endif %}</p>
+                                            {% if m.song2_voters %}
+                                                <p class="is-family-code is-size-7 has-text-centered has-text-grey-light">
+                                                    {{ m.song2_voters | join(', ') }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                    {% else %}
+                                    <p class="has-text-grey-light">TBD</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="notification is-warning">
+                        No matchups for this round yet.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</section>
+
+<script>
+// Tab switching
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.tabs li');
+    const roundContents = document.querySelectorAll('.round-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const target = this.dataset.target;
+
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('is-active'));
+
+            // Hide all round content
+            roundContents.forEach(rc => rc.classList.remove('is-active'));
+
+            // Add active class to clicked tab
+            this.classList.add('is-active');
+
+            // Show target round content
+            const targetContent = document.getElementById(target);
+            if (targetContent) {
+                targetContent.classList.add('is-active');
+            }
+        });
+    });
+
+    // Get CSRF token from server-rendered template
+    const csrfToken = '{{ csrf_token() }}';
+
+    // Voting AJAX
+    const voteButtons = document.querySelectorAll('.vote-button');
+
+    voteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const matchupId = this.dataset.matchupId;
+            const songId = this.dataset.songId;
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('matchup_id', matchupId);
+            formData.append('song_id', songId);
+            // Append CSRF token so Flask-WTF can validate the request
+            formData.append('csrf_token', csrfToken);
+
+            fetch('{{ url_for("soty.vote") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update button states for this matchup
+                    const matchupButtons = document.querySelectorAll(`button[data-matchup-id="${matchupId}"]`);
+                    matchupButtons.forEach(btn => {
+                        btn.classList.remove('is-primary', 'selected');
+                        btn.classList.add('is-light');
+                    });
+
+                    // Highlight clicked button
+                    this.classList.remove('is-light');
+                    this.classList.add('is-primary', 'selected');
+
+                    // Add green border to card
+                    const card = this.closest('.matchup-card');
+                    if (card) {
+                        card.classList.add('user-voted');
+                    }
+                } else {
+                    alert(data.error || 'Failed to submit vote');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to submit vote. Please try again.');
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

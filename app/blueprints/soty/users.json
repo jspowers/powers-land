@@ -1,0 +1,65 @@
+[
+    {
+        "user_id": 1,
+        "admin": true,
+        "first_name": "James",
+        "last_name": "Powers",
+        "account_pin": "7553"
+    },
+    {
+        "user_id": 2,
+        "admin": false,
+        "first_name": "Andrew",
+        "last_name": "Robbins",
+        "account_pin": "5643"
+    },
+    {
+        "user_id": 3,
+        "admin": false,
+        "first_name": "Andrew",
+        "last_name": "Kraemer",
+        "account_pin": "6769"
+    },
+    {
+        "user_id": 4,   
+        "admin": false,
+        "first_name": "Katelyn",
+        "last_name": "Kraemer",
+        "account_pin": "0806"
+    },
+    {
+        "user_id": 5,
+        "admin": true,
+        "first_name": "Lindsay",
+        "last_name": "Kubatzky",
+        "account_pin": "2915"
+    },
+    {
+        "user_id": 6,
+        "admin": false,
+        "first_name": "Erin",
+        "last_name": "Kubatzky",
+        "account_pin": "2222"
+    },
+    {
+        "user_id": 7,
+        "admin": false,
+        "first_name": "Casey",
+        "last_name": "Powers",
+        "account_pin": "7975"
+    },
+    {
+        "user_id": 8,
+        "admin": false,
+        "first_name": "Lindsey",
+        "last_name": "Meyer",
+        "account_pin": "0119"
+    },
+    {
+        "user_id": 9,
+        "admin": false,
+        "first_name": "Sarah",
+        "last_name": "Benoist",
+        "account_pin": "9188"
+    }
+]

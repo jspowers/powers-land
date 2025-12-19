@@ -24,21 +24,23 @@ def create_app(config_name='development'):
 
     # Import models (for Flask-Migrate to detect them)
     from app.blueprints.landscaping import models as landscaping_models
+    from app.blueprints.soty import models as soty_models
 
     # Register blueprints
     from app.blueprints.main import main_bp
     from app.blueprints.landscaping import landscaping_bp
+    from app.blueprints.soty import soty_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(landscaping_bp, url_prefix='/landscaping')
-    # app.register_blueprint(soty_bp, url_prefix='/soty')
+    app.register_blueprint(soty_bp, url_prefix='/soty')
 
-    # # Template filters
-    # @app.template_filter('timestamp_to_date')
-    # def timestamp_to_date(timestamp):
-    #     """Convert Unix timestamp to readable date"""
-    #     from datetime import datetime
-    #     return datetime.fromtimestamp(timestamp).strftime('%b %d, %Y %I:%M %p')
+    # Template filters
+    @app.template_filter('timestamp_to_date')
+    def timestamp_to_date(timestamp):
+        """Convert Unix timestamp to readable date"""
+        from datetime import datetime
+        return datetime.fromtimestamp(timestamp).strftime('%B %d, %Y at %I:%M %p')
 
     # Error handlers
     @app.errorhandler(404)

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Build Bracket - Admin - Song of the Year{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1">Build Tournament Bracket</h1>
+
+        <div class="notification is-warning">
+            <p><strong>Warning:</strong> This will seed all songs and generate the tournament bracket. This action cannot be undone.</p>
+        </div>
+
+        <!-- Reset Tournament Button (if bracket already exists) -->
+        {% if songs and songs[0].seed_number %}
+        <div class="notification is-danger">
+            <p><strong>Tournament already exists!</strong> You must reset it before building a new bracket.</p>
+            <form method="POST" action="{{ url_for('soty.reset_tournament') }}" class="mt-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="button"
+                        onclick="return confirm('Are you sure? This will delete all votes, rounds, and matchups!');">
+                    Reset Tournament
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Song Preview -->
+        <div class="box">
+            <h2 class="title is-3">Songs ({{ songs | length }} total)</h2>
+            <p class="help mb-3">Songs will be seeded by popularity (lower number = better seed)</p>
+
+            <div class="table-container">
+                <table class="table is-fullwidth is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Predicted Seed</th>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Popularity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for song in songs %}
+                        <tr>
+                            <td><strong>#{{ loop.index }}</strong></td>
+                            <td>{{ song.title }}</td>
+                            <td>{{ song.artist }}</td>
+                            <td>{{ song.album or 'N/A' }}</td>
+                            <td>{{ song.popularity or 'N/A' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Confirm Build -->
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="field is-grouped">
+                <div class="control">
+                    <button type="submit" class="button is-primary is-large" {% if songs and songs[0].seed_number %}disabled{% endif %}>
+                        {% if songs and songs[0].seed_number %}
+                            Bracket Already Built
+                        {% else %}
+                            Confirm & Build Bracket
+                        {% endif %}
+                    </button>
+                </div>
+                <div class="control">
+                    <a href="{{ url_for('soty.index') }}" class="button is-light is-large">
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
