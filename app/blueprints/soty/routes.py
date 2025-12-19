@@ -75,6 +75,20 @@ def bracket():
     for round_obj in rounds:
         matchups = Matchup.query.filter_by(round_id=round_obj.id).order_by(Matchup.position_in_round).all()
 
+        # Get bye songs for Round 1
+        bye_songs = []
+        if round_obj.round_number == 1:
+            num_songs = Song.query.count()
+            if num_songs > 0:
+                import math
+                bracket_size = 2 ** math.ceil(math.log2(num_songs))
+                num_byes = bracket_size - num_songs
+
+                if num_byes > 0:
+                    bye_songs = Song.query.filter(
+                        Song.seed_number <= num_byes
+                    ).order_by(Song.seed_number).all()
+
         matchups_data = []
         for matchup in matchups:
             # Get user's vote
@@ -125,6 +139,7 @@ def bracket():
         rounds_data.append({
             'round': round_obj,
             'matchups': matchups_data,
+            'bye_songs': bye_songs,
             'is_active': round_obj.status == 'active',
             'is_voting_open': is_voting_open
         })

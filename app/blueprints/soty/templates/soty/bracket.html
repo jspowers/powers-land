@@ -91,7 +91,7 @@
                 <h2 class="title is-3">{{ rd.round.name }}</h2>
 
                 <!-- Round Info -->
-                <div class="notification is-light">
+                <div class="notification is-info is-dark">
                     <div class="columns">
                         <div class="column">
                             <p><strong>Status:</strong> {{ rd.round.status | title }}</p>
@@ -130,6 +130,41 @@
                         {% else %}
                             <button class="button is-light" disabled>Round {{ rd.round.status | title }}</button>
                         {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Byes Section (Round 1 only) -->
+                {% if rd.bye_songs %}
+                <div class="box mb-4" style="background-color:hsl(0, 0%, 14%); border-left: 4px solid #48c774;">
+                    <h4 class="title is-5 has-text-success">Byes - Advancing to Round 2</h4>
+                    <p class="help mb-3">These top-seeded songs automatically advance to the next round.</p>
+
+                    <div class="columns is-multiline">
+                        {% for song in rd.bye_songs %}
+                        <div class="column is-6">
+                            <div class="card" style="background-color: #2a3e2a;">
+                                <div class="card-content" style="padding: 1rem;">
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <figure class="image is-48x48">
+                                                {% if song.artwork_url %}
+                                                    <img src="{{ song.artwork_url }}" alt="{{ song.title }}">
+                                                {% else %}
+                                                    <div style="width: 48px; height: 48px; background-color: #3a3e43;"></div>
+                                                {% endif %}
+                                            </figure>
+                                        </div>
+                                        <div class="media-content">
+                                            <p class="title is-6">{{ song.title }}</p>
+                                            <p class="subtitle is-7">{{ song.artist }}</p>
+                                            <p class="help has-text-success">Seed #{{ song.seed_number }} - BYE</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
                 {% endif %}
