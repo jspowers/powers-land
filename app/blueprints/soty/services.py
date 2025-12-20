@@ -29,7 +29,7 @@ def verify_pin(pin):
     """Verify PIN and return user data if valid"""
     users = load_users()
     for user_id, user in users.items():
-        if user['account_pin'] == pin:
+        if user['account_segment'] == pin:
             return user
     return None
 

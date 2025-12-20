@@ -1,0 +1,83 @@
+[
+    {
+        "user_id": 1,
+        "admin": true,
+        "first_name": "James",
+        "last_name": "Powers",
+        "account_segment": "7553",
+        "can_vote": true,
+        "music_service": "apple"
+    },
+    {
+        "user_id": 2,
+        "admin": false,
+        "first_name": "Andrew",
+        "last_name": "Robbins",
+        "account_segment": "5643",
+        "can_vote": true,
+        "music_service": "spotify"
+    },
+    {
+        "user_id": 3,
+        "admin": false,
+        "first_name": "Andrew",
+        "last_name": "Kraemer",
+        "account_segment": "6769",
+        "can_vote": true,
+        "music_service": "apple"
+    },
+    {
+        "user_id": 4,   
+        "admin": false,
+        "first_name": "Katelyn",
+        "last_name": "Kraemer",
+        "account_segment": "0806",
+        "can_vote": true,
+        "music_service": "spotify"
+    },
+    {
+        "user_id": 5,
+        "admin": true,
+        "first_name": "Lindsay",
+        "last_name": "Kubatzky",
+        "account_segment": "2915",
+        "can_vote": true,
+        "music_service": "spotify"
+    },
+    {
+        "user_id": 6,
+        "admin": false,
+        "first_name": "Erin",
+        "last_name": "Kubatzky",
+        "account_segment": "2222",
+        "can_vote": true,
+        "music_service": "spotify"
+    },
+    {
+        "user_id": 7,
+        "admin": false,
+        "first_name": "Casey",
+        "last_name": "Powers",
+        "account_segment": "7975",
+        "can_vote": true,
+        "music_service": "spotify"
+    },
+    {
+        "user_id": 8,
+        "admin": false,
+        "first_name": "Lindsey",
+        "last_name": "Meyer",
+        "account_segment": "0119",
+        "can_vote": true,
+        "music_service": "spotify"
+    },
+    {
+        "user_id": 9,
+        "admin": false,
+        "first_name": "Sarah",
+        "last_name": "Benoist",
+        "account_segment": "9188",
+        "can_vote": true,
+        "music_service": "spotify"
+    }
+]

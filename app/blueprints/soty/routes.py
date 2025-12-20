@@ -138,12 +138,35 @@ def bracket():
             (not round_obj.end_date or now <= round_obj.end_date)
         )
 
+        # Determine which users have finished voting in this round
+        finished_voters = []
+        unfinished_voters = []
+
+        if round_obj.status in ['active', 'tiebreaker']:
+            total_matchups = len(matchups)
+
+            for user_id, user in users.items():
+                # Count how many matchups this user has voted on in this round
+                user_votes_in_round = Vote.query.filter(
+                    Vote.user_id == user_id,
+                    Vote.matchup_id.in_([m.id for m in matchups])
+                ).count()
+
+                user_display_name = f"{user['first_name']} {user['last_name'][0]}."
+
+                if user_votes_in_round >= total_matchups:
+                    finished_voters.append(user_display_name)
+                else:
+                    unfinished_voters.append(user_display_name)
+
         rounds_data.append({
             'round': round_obj,
             'matchups': matchups_data,
             'bye_songs': bye_songs,
             'is_active': round_obj.status == 'active',
-            'is_voting_open': is_voting_open
+            'is_voting_open': is_voting_open,
+            'finished_voters': finished_voters,
+            'unfinished_voters': unfinished_voters
         })
 
     return render_template('soty/bracket.html',

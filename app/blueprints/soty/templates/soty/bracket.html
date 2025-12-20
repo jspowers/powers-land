@@ -114,6 +114,23 @@
                         </div>
                         {% endif %}
                     </div>
+
+                    <!-- Voting Completion Status -->
+                    {% if rd.round.status in ['active', 'tiebreaker'] %}
+                    <hr>
+                    <div class="columns">
+                        {% if rd.finished_voters %}
+                        <div class="column">
+                            <p><strong>✓ Finished Voting:</strong> {{ rd.finished_voters | join(', ') }}</p>
+                        </div>
+                        {% endif %}
+                        {% if rd.unfinished_voters %}
+                        <div class="column">
+                            <p><strong>⏳ Not Yet Voted:</strong> {{ rd.unfinished_voters | join(', ') }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
                 </div>
 
                 <!-- Tiebreaker Notification -->
