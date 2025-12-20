@@ -6,7 +6,7 @@ from app.blueprints.soty.services import (
     get_current_user, is_admin, login_required, admin_required,
     SOTYTournamentService, verify_pin
 )
-from app import db
+from app import db, limiter
 import time
 from datetime import datetime, timedelta
 
@@ -30,6 +30,7 @@ def index():
 
 
 @soty_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def login():
     """PIN entry page"""
     if request.method == 'POST':
@@ -186,7 +187,10 @@ def vote():
     # Validation
     matchup = Matchup.query.get_or_404(matchup_id)
     round_obj = Round.query.get(matchup.round_id)
-
+    
+    if song_id not in [matchup.song1_id, matchup.song2_id]:
+        return jsonify({'success': False, 'error': 'Invalid song for matchup'}), 400
+    
     if round_obj.status != 'active':
         return jsonify({'success': False, 'error': 'Round is not active'}), 400
 

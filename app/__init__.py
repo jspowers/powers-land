@@ -1,14 +1,22 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
 import logging
 from logging.handlers import RotatingFileHandler
 import os
 
+
+
+
 db = SQLAlchemy()
 migrate = Migrate()
 csrf = CSRFProtect()
+limiter = Limiter(
+        key_func=lambda: request.remote_addr,
+        default_limits=["200 per day", "50 per hour"]
+    )
 
 def create_app(config_name='development'):
     app = Flask(__name__)
@@ -21,6 +29,7 @@ def create_app(config_name='development'):
     db.init_app(app)
     migrate.init_app(app, db)
     csrf.init_app(app)
+    limiter.init_app(app)
 
     # Import models (for Flask-Migrate to detect them)
     from app.blueprints.landscaping import models as landscaping_models
