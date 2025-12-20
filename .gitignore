@@ -1,3 +1,5 @@
+SECURITY_REVIEW_SOTY.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -218,4 +220,5 @@ terraform/*.tfstate*
 terraform/*.tfstate.backup
 terraform/.terraform.lock.hcl
 
-
+# Migrations
+migrations/versions/*
