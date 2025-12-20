@@ -326,17 +326,23 @@ class SOTYTournamentService:
                 next_round, winners, bye_songs
             )
 
-        # Normal case: pair winners by seed
+        # Normal case: pair winners by POSITION (not seed)
+        # This creates traditional bracket structure where neighboring
+        # matchups face each other in the next round
         matchups_created = []
-        sorted_winners = sorted(winners, key=lambda s: s.seed_number)
 
-        for i in range(0, len(sorted_winners), 2):
-            if i + 1 < len(sorted_winners):
+        # Winners are already in position order from the query above
+        # Do NOT sort by seed - this would break bracket structure!
+        winners_by_position = winners
+
+        # Pair consecutive positions: 0+1, 2+3, 4+5, etc.
+        for i in range(0, len(winners_by_position), 2):
+            if i + 1 < len(winners_by_position):
                 matchup = Matchup(
                     round_id=next_round.id,
                     position_in_round=i // 2,
-                    song1_id=sorted_winners[i].id,
-                    song2_id=sorted_winners[i + 1].id,
+                    song1_id=winners_by_position[i].id,
+                    song2_id=winners_by_position[i + 1].id,
                     status='pending'
                 )
                 db.session.add(matchup)
@@ -349,31 +355,35 @@ class SOTYTournamentService:
     def _build_round_2_with_byes(next_round, round_1_winners, bye_songs):
         """
         Build Round 2 matchups with bye songs and Round 1 winners.
-        Pairs best seeds with worst seeds for balanced matchups.
+        Uses position-based pairing for traditional bracket structure.
         """
         matchups_created = []
 
-        # Sort both lists by seed_number (ascending - best seed first)
+        # Sort bye songs by seed_number (best to worst)
         sorted_byes = sorted(bye_songs, key=lambda s: s.seed_number)
-        sorted_winners = sorted(round_1_winners, key=lambda s: s.seed_number)
 
-        # Combine: byes first (they have better seeds), then winners
-        all_advancing = sorted_byes + sorted_winners
+        # Keep R1 winners in POSITION ORDER from their Round 1 matchups
+        # Do NOT sort by seed - they come from build_next_round_matchups
+        # already ordered by position_in_round
+        winners_by_position = round_1_winners
 
-        # Pair: best vs worst, 2nd best vs 2nd worst, etc.
-        for i in range(len(all_advancing) // 2):
-            high_seed = all_advancing[i]
-            low_seed = all_advancing[-(i + 1)]
+        # Combine for traditional bracket structure:
+        # Byes fill left side, R1 winners fill right side
+        all_advancing = sorted_byes + winners_by_position
 
-            matchup = Matchup(
-                round_id=next_round.id,
-                position_in_round=i,
-                song1_id=high_seed.id,
-                song2_id=low_seed.id,
-                status='pending'
-            )
-            db.session.add(matchup)
-            matchups_created.append(matchup)
+        # Pair consecutive positions: 0+1, 2+3, etc.
+        # This creates traditional bracket where neighbors meet
+        for i in range(0, len(all_advancing), 2):
+            if i + 1 < len(all_advancing):
+                matchup = Matchup(
+                    round_id=next_round.id,
+                    position_in_round=i // 2,
+                    song1_id=all_advancing[i].id,
+                    song2_id=all_advancing[i + 1].id,
+                    status='pending'
+                )
+                db.session.add(matchup)
+                matchups_created.append(matchup)
 
         db.session.commit()
         return matchups_created
