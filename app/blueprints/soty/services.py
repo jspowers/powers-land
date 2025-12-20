@@ -288,6 +288,10 @@ class SOTYTournamentService:
         Build matchups for the round following the completed round.
         Uses winners from completed round to populate next round matchups.
         """
+        # Guard: Don't build if still in tiebreaker mode
+        if completed_round.status != 'completed':
+            return None
+
         # Get next round
         next_round = Round.query.filter_by(
             round_number=completed_round.round_number + 1

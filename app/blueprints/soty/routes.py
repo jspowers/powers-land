@@ -101,10 +101,10 @@ def bracket():
                 if vote:
                     user_vote = vote.song_id
 
-            # Get voter names for each song (only if round is completed)
+            # Get voter names for each song (if round is completed or in tiebreaker mode)
             song1_voters = []
             song2_voters = []
-            if round_obj.status == 'completed' and matchup.song1_id and matchup.song2_id:
+            if round_obj.status in ['completed', 'tiebreaker'] and matchup.song1_id and matchup.song2_id:
                 votes_song1 = Vote.query.filter_by(matchup_id=matchup.id, song_id=matchup.song1_id).all()
                 votes_song2 = Vote.query.filter_by(matchup_id=matchup.id, song_id=matchup.song2_id).all()
 
@@ -126,7 +126,9 @@ def bracket():
                 'song2_votes': matchup.get_vote_count(matchup.song2_id) if matchup.song2_id else 0,
                 'song1_voters': song1_voters,
                 'song2_voters': song2_voters,
-                'user_vote': user_vote
+                'user_vote': user_vote,
+                'is_tied': matchup.is_tied,
+                'tie_resolved_by_admin': matchup.tie_resolved_by_admin
             })
 
         # Check if voting is open
@@ -237,65 +239,220 @@ def build_bracket():
 @admin_required
 def finalize_round(round_id):
     """
-    Finalize current round and build next round
-    - Mark round completed
-    - Determine winners
-    - Build next round matchups
+    Finalize current round with two-phase tiebreaker support
+
+    Phase 1 (Active → Tiebreaker/Completed):
+    - Detect tied matchups
+    - Auto-lock non-tied winners
+    - Enter tiebreaker mode if ties exist
+
+    Phase 2 (Tiebreaker → Completed):
+    - Validate all ties resolved
+    - Complete round and build next round
     """
     round_obj = Round.query.get_or_404(round_id)
 
-    if round_obj.status != 'active':
-        flash('Can only finalize active rounds', 'warning')
+    if round_obj.status not in ['active', 'tiebreaker']:
+        flash('Can only finalize active rounds or resolve tiebreakers', 'warning')
         return redirect(url_for('soty.bracket'))
 
     try:
-        # Mark round completed
-        round_obj.status = 'completed'
-        round_obj.end_date = int(time.time())
+        # PHASE 1: Initial Finalization (from 'active')
+        if round_obj.status == 'active':
+            tied_matchups = []
+            non_tied_matchups = []
 
-        # Mark matchups completed and record winners
-        matchups = Matchup.query.filter_by(round_id=round_obj.id).all()
-        for matchup in matchups:
-            winner = matchup.get_winner()
-            if winner:
-                matchup.winner_song_id = winner.id
-            matchup.status = 'completed'
+            matchups = Matchup.query.filter_by(round_id=round_obj.id).all()
 
-            # Update max_round_reached for both songs in this matchup
-            if matchup.song1:
-                matchup.song1.max_round_reached = max(matchup.song1.max_round_reached, round_obj.round_number)
-            if matchup.song2:
-                matchup.song2.max_round_reached = max(matchup.song2.max_round_reached, round_obj.round_number)
+            for matchup in matchups:
+                song1_votes = matchup.get_vote_count(matchup.song1_id) if matchup.song1_id else 0
+                song2_votes = matchup.get_vote_count(matchup.song2_id) if matchup.song2_id else 0
 
-        # Update is_alive status for losers
-        for matchup in matchups:
-            if matchup.song1_id and matchup.winner_song_id != matchup.song1_id:
-                matchup.song1.is_alive = False
-            if matchup.song2_id and matchup.winner_song_id != matchup.song2_id:
-                matchup.song2.is_alive = False
+                # Check for tie
+                if matchup.song1_id and matchup.song2_id and song1_votes == song2_votes:
+                    matchup.is_tied = True
+                    tied_matchups.append(matchup)
+                else:
+                    # Auto-determine winner for non-tied matchups
+                    winner = matchup.get_winner()
+                    if winner:
+                        matchup.winner_song_id = winner.id
+                        matchup.tie_resolved_by_admin = False
+                    matchup.status = 'completed'
+                    non_tied_matchups.append(matchup)
 
-        # Build next round
-        next_matchups = SOTYTournamentService.build_next_round_matchups(round_obj)
+            # Update max_round_reached for all songs in non-tied matchups
+            for matchup in non_tied_matchups:
+                if matchup.song1:
+                    matchup.song1.max_round_reached = max(
+                        matchup.song1.max_round_reached, round_obj.round_number
+                    )
+                if matchup.song2:
+                    matchup.song2.max_round_reached = max(
+                        matchup.song2.max_round_reached, round_obj.round_number
+                    )
 
-        if next_matchups is None:
-            # Tournament complete
-            flash('Tournament completed!', 'success')
-        else:
-            # Activate next round
-            next_round = Round.query.filter_by(round_number=round_obj.round_number + 1).first()
-            next_round.status = 'active'
-            next_round.start_date = int(time.time())
-            next_round.end_date = int(time.time() + (96 * 3600))  # 96 hours
+            # Update is_alive for losers in non-tied matchups
+            for matchup in non_tied_matchups:
+                if matchup.song1_id and matchup.winner_song_id != matchup.song1_id:
+                    matchup.song1.is_alive = False
+                if matchup.song2_id and matchup.winner_song_id != matchup.song2_id:
+                    matchup.song2.is_alive = False
 
-            flash(f'{round_obj.name} finalized! {next_round.name} is now active.', 'success')
+            # Determine next status
+            if tied_matchups:
+                round_obj.status = 'tiebreaker'
+                round_obj.tiebreaker_end_date = int(time.time() + (48 * 3600))  # 48 hours minimum
+                db.session.commit()
+                flash(
+                    f'{len(tied_matchups)} tie(s) detected in {round_obj.name}. '
+                    f'Please select winners for tied matchups below.',
+                    'warning'
+                )
+            else:
+                # No ties - proceed to complete
+                round_obj.status = 'completed'
+                round_obj.end_date = int(time.time())
 
-        db.session.commit()
+                # Build next round
+                next_matchups = SOTYTournamentService.build_next_round_matchups(round_obj)
+
+                if next_matchups is None:
+                    flash('Tournament completed!', 'success')
+                else:
+                    next_round = Round.query.filter_by(
+                        round_number=round_obj.round_number + 1
+                    ).first()
+                    next_round.status = 'active'
+                    next_round.start_date = int(time.time())
+                    next_round.end_date = int(time.time() + (96 * 3600))
+
+                    flash(
+                        f'{round_obj.name} finalized! {next_round.name} is now active.',
+                        'success'
+                    )
+
+                db.session.commit()
+
+        # PHASE 2: Finalize Tiebreaker (from 'tiebreaker')
+        elif round_obj.status == 'tiebreaker':
+            # Verify all tied matchups have admin-selected winners
+            tied_matchups = Matchup.query.filter_by(
+                round_id=round_obj.id,
+                is_tied=True
+            ).all()
+
+            unresolved = [m for m in tied_matchups if not m.winner_song_id]
+
+            if unresolved:
+                flash(
+                    f'Please select winners for all {len(unresolved)} remaining tied matchup(s)',
+                    'warning'
+                )
+                return redirect(url_for('soty.bracket'))
+
+            # All ties resolved - complete the round
+            for matchup in tied_matchups:
+                matchup.status = 'completed'
+
+                # Update max_round_reached
+                if matchup.song1:
+                    matchup.song1.max_round_reached = max(
+                        matchup.song1.max_round_reached, round_obj.round_number
+                    )
+                if matchup.song2:
+                    matchup.song2.max_round_reached = max(
+                        matchup.song2.max_round_reached, round_obj.round_number
+                    )
+
+                # Update is_alive for losers
+                if matchup.song1_id and matchup.winner_song_id != matchup.song1_id:
+                    matchup.song1.is_alive = False
+                if matchup.song2_id and matchup.winner_song_id != matchup.song2_id:
+                    matchup.song2.is_alive = False
+
+            # Mark round completed
+            round_obj.status = 'completed'
+            round_obj.end_date = int(time.time())
+
+            # Build next round
+            next_matchups = SOTYTournamentService.build_next_round_matchups(round_obj)
+
+            if next_matchups is None:
+                flash('Tournament completed!', 'success')
+            else:
+                next_round = Round.query.filter_by(
+                    round_number=round_obj.round_number + 1
+                ).first()
+                next_round.status = 'active'
+                next_round.start_date = int(time.time())
+                next_round.end_date = int(time.time() + (96 * 3600))
+
+                flash(
+                    f'Tiebreakers resolved! {next_round.name} is now active.',
+                    'success'
+                )
+
+            db.session.commit()
 
     except Exception as e:
         db.session.rollback()
         flash(f'Error finalizing round: {str(e)}', 'danger')
 
     return redirect(url_for('soty.bracket'))
+
+
+@soty_bp.route('/admin/matchup/<int:matchup_id>/resolve-tie', methods=['POST'])
+@admin_required
+def resolve_tie(matchup_id):
+    """
+    Admin selects winner for a tied matchup
+    """
+    matchup = Matchup.query.get_or_404(matchup_id)
+    round_obj = Round.query.get(matchup.round_id)
+
+    # Validate round is in tiebreaker mode
+    if round_obj.status != 'tiebreaker':
+        return jsonify({
+            'success': False,
+            'error': 'Round is not in tiebreaker mode'
+        }), 400
+
+    # Validate matchup is tied
+    if not matchup.is_tied:
+        return jsonify({
+            'success': False,
+            'error': 'Matchup is not marked as tied'
+        }), 400
+
+    # Get selected song_id
+    song_id = request.form.get('song_id', type=int)
+
+    # Validate song is in this matchup
+    if song_id not in [matchup.song1_id, matchup.song2_id]:
+        return jsonify({
+            'success': False,
+            'error': 'Invalid song for this matchup'
+        }), 400
+
+    try:
+        # Set winner
+        matchup.winner_song_id = song_id
+        matchup.tie_resolved_by_admin = True
+
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Tie-breaker winner selected'
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 
 @soty_bp.route('/admin/round/<int:round_id>/extend', methods=['POST'])

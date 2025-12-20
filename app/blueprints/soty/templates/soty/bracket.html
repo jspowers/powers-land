@@ -80,6 +80,8 @@
                         <span class="tag is-success ml-2 is-small">Completed</span>
                         {% elif rd.round.status == 'active' %}
                         <span class="tag is-info ml-2 is-small">Active</span>
+                        {% elif rd.round.status == 'tiebreaker' %}
+                        <span class="tag is-warning ml-2 is-small">Tiebreaker</span>
                         {% else %}
                         <span class="tag is-light ml-2 is-small">Pending</span>
                         {% endif %}
@@ -114,6 +116,23 @@
                     </div>
                 </div>
 
+                <!-- Tiebreaker Notification -->
+                {% if rd.round.status == 'tiebreaker' %}
+                <div class="notification is-warning">
+                    <p class="title is-5">⚠️ Tie-breaker In Progress</p>
+                    <p>This round has tied matchups.
+                    {% if is_admin %}
+                        Please select a winner for each tied matchup below, then click "Finalize Tiebreaker".
+                        {% if rd.round.tiebreaker_end_date %}
+                        <br><strong>Minimum deadline:</strong> {{ rd.round.tiebreaker_end_date | timestamp_to_date }}
+                        {% endif %}
+                    {% else %}
+                        Admins are resolving ties. Check back soon!
+                    {% endif %}
+                    </p>
+                </div>
+                {% endif %}
+
                 <!-- Admin Controls -->
                 {% if is_admin %}
                 <div class="box mb-4" style="background-color: #1a1d21;">
@@ -124,7 +143,7 @@
                             style="display:inline;">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" class="button is-primary"
-                                onclick="return confirm('Are you sure you want to finalize this round? This cannot be undone.');">
+                                onclick="return confirm('Are you sure you want to finalize this round? This will lock down non-tied winners.');">
                                 Finalize {{ rd.round.name }}
                             </button>
                         </form>
@@ -136,6 +155,17 @@
                                 style="width:80px;">
                             <button type="submit" class="button is-warning">Extend by Hours</button>
                         </form>
+
+                        {% elif rd.round.status == 'tiebreaker' %}
+                        <form method="POST" action="{{ url_for('soty.finalize_round', round_id=rd.round.id) }}"
+                            style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="button is-success"
+                                onclick="return confirm('Finalize tiebreaker selections? This will advance the tournament.');">
+                                Finalize Tiebreaker
+                            </button>
+                        </form>
+
                         {% else %}
                         <button class="button is-light" disabled>Round {{ rd.round.status | title }}</button>
                         {% endif %}
@@ -187,8 +217,29 @@
                 <!-- Matchups -->
                 {% if rd.matchups %}
                 {% for m in rd.matchups %}
-                <div class="card matchup-card {% if m.user_vote %}user-voted{% endif %} p-0"
+                <div class="card matchup-card {% if m.user_vote %}user-voted{% endif %} {% if m.is_tied %}has-background-warning-dark{% endif %} p-0"
                     style="background-color: #2a2e33;">
+
+                    <!-- Tie Indicator Banner -->
+                    {% if m.is_tied and rd.round.status == 'tiebreaker' %}
+                    <div class="card-header has-background-warning">
+                        <p class="card-header-title has-text-dark">
+                            ⚠️ TIE: {{ m.song1_votes }} - {{ m.song2_votes }}
+                            {% if m.matchup.winner_song_id %}
+                            (Winner Selected)
+                            {% else %}
+                            (Admin Selection Required)
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% elif m.is_tied and m.tie_resolved_by_admin and rd.round.status == 'completed' %}
+                    <div class="card-header has-background-info-dark">
+                        <p class="card-header-title has-text-light">
+                            ⚖️ Resolved Tiebreaker: {{ m.song1_votes }} - {{ m.song2_votes }} (Admin Decision)
+                        </p>
+                    </div>
+                    {% endif %}
+
                     <div class="card-content">
                         <div class="columns is-vcentered">
                             <!-- Song 1 -->
@@ -225,11 +276,38 @@
                                 </button>
                                 {% endif %}
 
+                                <!-- Vote counts during tiebreaker -->
+                                {% if rd.round.status == 'tiebreaker' and m.is_tied %}
+                                <div class="mt-2">
+                                    <p class="help has-text-centered">
+                                        <strong>{{ m.song1_votes }}</strong> vote{% if m.song1_votes != 1 %}s{% endif %}
+                                    </p>
+                                </div>
+                                {% endif %}
+
+                                <!-- Admin Tiebreaker Selection Button -->
+                                {% if is_admin and rd.round.status == 'tiebreaker' and m.is_tied %}
+                                <button
+                                    class="button tiebreaker-button is-fullwidth mt-2 {% if m.matchup.winner_song_id == m.song1.id %}is-success selected{% else %}is-light{% endif %}"
+                                    data-matchup-id="{{ m.matchup.id }}"
+                                    data-song-id="{{ m.song1.id }}">
+                                    {% if m.matchup.winner_song_id == m.song1.id %}
+                                    ✓ Selected as Winner
+                                    {% else %}
+                                    Select as Winner
+                                    {% endif %}
+                                </button>
+                                {% endif %}
+
                                 <!-- Vote counts and voter names (only show after round completes) -->
                                 {% if rd.round.status == 'completed' and m.song2 %}
                                 <div class="mt-2">
-                                    <p class="help has-text-centered"><strong>{{ m.song1_votes }}</strong> vote{% if
-                                        m.song1_votes != 1 %}s{% endif %}</p>
+                                    <p class="help has-text-centered">
+                                        <strong>{{ m.song1_votes }}</strong> vote{% if m.song1_votes != 1 %}s{% endif %}
+                                        {% if m.is_tied and m.tie_resolved_by_admin and m.matchup.winner_song_id == m.song1.id %}
+                                        <span class="tag is-info is-small ml-1">⚖️ Admin Pick</span>
+                                        {% endif %}
+                                    </p>
                                     {% if m.song1_voters %}
                                     <p class="is-family-code is-size-7 has-text-centered has-text-grey-light">
                                         {{ m.song1_voters | join(', ') }}
@@ -249,6 +327,9 @@
                             <div class="column is-2 has-text-centered">
                                 {% if m.song2 %}
                                 <p class="title is-3 has-text-grey-light">VS</p>
+                                {% if m.is_tied and rd.round.status == 'tiebreaker' %}
+                                <p class="tag is-warning">TIED</p>
+                                {% endif %}
                                 {% else %}
                                 <p class="title is-5 has-text-success">BYE</p>
                                 {% endif %}
@@ -285,11 +366,38 @@
                                 </button>
                                 {% endif %}
 
+                                <!-- Vote counts during tiebreaker -->
+                                {% if rd.round.status == 'tiebreaker' and m.is_tied %}
+                                <div class="mt-2">
+                                    <p class="help has-text-centered">
+                                        <strong>{{ m.song2_votes }}</strong> vote{% if m.song2_votes != 1 %}s{% endif %}
+                                    </p>
+                                </div>
+                                {% endif %}
+
+                                <!-- Admin Tiebreaker Selection Button -->
+                                {% if is_admin and rd.round.status == 'tiebreaker' and m.is_tied %}
+                                <button
+                                    class="button tiebreaker-button is-fullwidth mt-2 {% if m.matchup.winner_song_id == m.song2.id %}is-success selected{% else %}is-light{% endif %}"
+                                    data-matchup-id="{{ m.matchup.id }}"
+                                    data-song-id="{{ m.song2.id }}">
+                                    {% if m.matchup.winner_song_id == m.song2.id %}
+                                    ✓ Selected as Winner
+                                    {% else %}
+                                    Select as Winner
+                                    {% endif %}
+                                </button>
+                                {% endif %}
+
                                 <!-- Vote counts and voter names (only show after round completes) -->
                                 {% if rd.round.status == 'completed' %}
                                 <div class="mt-2">
-                                    <p class="help has-text-centered"><strong>{{ m.song2_votes }}</strong> vote{% if
-                                        m.song2_votes != 1 %}s{% endif %}</p>
+                                    <p class="help has-text-centered">
+                                        <strong>{{ m.song2_votes }}</strong> vote{% if m.song2_votes != 1 %}s{% endif %}
+                                        {% if m.is_tied and m.tie_resolved_by_admin and m.matchup.winner_song_id == m.song2.id %}
+                                        <span class="tag is-info is-small ml-1">⚖️ Admin Pick</span>
+                                        {% endif %}
+                                    </p>
                                     {% if m.song2_voters %}
                                     <p class="is-family-code is-size-7 has-text-centered has-text-grey-light">
                                         {{ m.song2_voters | join(', ') }}
@@ -396,6 +504,55 @@
                     .catch(error => {
                         console.error('Error:', error);
                         alert('Failed to submit vote. Please try again.');
+                    });
+            });
+        });
+
+        // Tiebreaker selection AJAX (admin only)
+        const tiebreakerButtons = document.querySelectorAll('.tiebreaker-button');
+
+        tiebreakerButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const matchupId = this.dataset.matchupId;
+                const songId = this.dataset.songId;
+
+                const formData = new FormData();
+                formData.append('song_id', songId);
+                formData.append('csrf_token', csrfToken);
+
+                fetch(`/soty/admin/matchup/${matchupId}/resolve-tie`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': csrfToken
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update button states for this matchup
+                            const matchupButtons = document.querySelectorAll(
+                                `.tiebreaker-button[data-matchup-id="${matchupId}"]`
+                            );
+
+                            matchupButtons.forEach(btn => {
+                                btn.classList.remove('is-success', 'selected');
+                                btn.classList.add('is-light');
+                                btn.textContent = 'Select as Winner';
+                            });
+
+                            // Highlight clicked button
+                            this.classList.remove('is-light');
+                            this.classList.add('is-success', 'selected');
+                            this.textContent = '✓ Selected as Winner';
+                        } else {
+                            alert(data.error || 'Failed to select winner');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to select winner. Please try again.');
                     });
             });
         });

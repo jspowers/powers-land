@@ -34,9 +34,10 @@ class Round(Base):
     id = db.Column(db.Integer, primary_key=True)
     round_number = db.Column(db.Integer, nullable=False)  # 1, 2, 3, etc.
     name = db.Column(db.String(50))  # "Round of 16", "Quarterfinals", "Semifinals", "Finals"
-    status = db.Column(db.String(20), default='pending')  # 'pending', 'active', 'completed'
+    status = db.Column(db.String(20), default='pending')  # 'pending', 'active', 'tiebreaker', 'completed'
     start_date = db.Column(db.Integer)  # Unix timestamp
     end_date = db.Column(db.Integer)  # Unix timestamp (96-hour default deadline)
+    tiebreaker_end_date = db.Column(db.Integer)  # Unix timestamp (48-hour minimum for tiebreaker)
 
     # Relationships
     matchups = db.relationship('Matchup', backref='round', lazy='dynamic', cascade='all, delete-orphan')
@@ -58,6 +59,10 @@ class Matchup(Base):
     winner_song_id = db.Column(db.Integer, db.ForeignKey('soty_songs.id'))
 
     status = db.Column(db.String(20), default='pending')  # 'pending', 'voting', 'completed'
+
+    # Tiebreaker tracking
+    is_tied = db.Column(db.Boolean, default=False)  # True if matchup resulted in vote tie
+    tie_resolved_by_admin = db.Column(db.Boolean, default=False)  # True if admin manually selected winner
 
     # Relationships
     song1 = db.relationship('Song', foreign_keys=[song1_id], backref='matchups_as_song1')
