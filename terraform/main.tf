@@ -27,6 +27,46 @@ data "aws_ami" "ubuntu" {
   }
 }
 
+# IAM Role for EC2 with SSM permissions
+resource "aws_iam_role" "ec2_ssm_role" {
+  name = "powers-land-ec2-ssm-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name    = "powers-land-ec2-ssm-role"
+    Project = "powers-land"
+  }
+}
+
+# Attach AWS managed SSM policy
+resource "aws_iam_role_policy_attachment" "ssm_policy" {
+  role       = aws_iam_role.ec2_ssm_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+# IAM Instance Profile
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "powers-land-ec2-profile"
+  role = aws_iam_role.ec2_ssm_role.name
+
+  tags = {
+    Name    = "powers-land-ec2-profile"
+    Project = "powers-land"
+  }
+}
+
 # Security Group
 resource "aws_security_group" "web" {
   name        = "powers-land-web-sg"
@@ -77,6 +117,7 @@ resource "aws_instance" "web" {
   key_name      = var.key_name
 
   vpc_security_group_ids = [aws_security_group.web.id]
+  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
 
   root_block_device {
     volume_size = 20

@@ -182,25 +182,45 @@ See [terraform/README.md](terraform/README.md) for detailed documentation.
 
 ## GitHub Actions CI/CD
 
-### Setup
+Automated deployments use **AWS Systems Manager (SSM)** for secure, SSH-free deployments.
 
-1. **Create GitHub repository secrets** (Settings → Secrets → Actions):
-   - `EC2_HOST`: Elastic IP or domain name
-   - `EC2_SSH_KEY`: Contents of your SSH private key (.pem file)
+### Quick Setup
 
-2. **Push to main branch**:
+1. **Apply Terraform changes** (includes SSM IAM role):
+   ```bash
+   cd terraform
+   terraform apply
+   ```
+
+2. **Create GitHub repository secrets** (Settings → Secrets → Actions):
+   - `AWS_ACCESS_KEY_ID`: IAM user access key for GitHub Actions
+   - `AWS_SECRET_ACCESS_KEY`: IAM user secret key
+   - `AWS_REGION`: Your AWS region (e.g., `us-east-1`)
+   - `EC2_INSTANCE_ID`: From `terraform output instance_id`
+
+3. **Push to main branch**:
    ```bash
    git push origin main
    ```
 
-3. **Monitor deployment**:
+4. **Monitor deployment**:
    - Go to Actions tab in GitHub repository
    - Watch the test and deploy jobs
 
+### Benefits of SSM Deployment
+
+- ✅ No SSH port exposure to GitHub Actions
+- ✅ No IP allowlisting required
+- ✅ AWS IAM-based authentication
+- ✅ Command logging in CloudWatch
+- ✅ More secure than SSH key management
+
 ### Workflow
 
-- **On push to main**: Tests run, then auto-deploy to EC2
+- **On push to main**: Tests run, then auto-deploy via SSM (no SSH needed)
 - **Manual trigger**: Use "Run workflow" button in Actions tab
+
+**📖 Detailed deployment setup guide**: See [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ## Database Migrations
 
@@ -286,9 +306,11 @@ sudo certbot renew --dry-run
 - Never commit `.env` or `terraform.tfvars` to version control
 - Keep dependencies updated
 - SSH access restricted to specific IP (configured in Terraform)
+- Deployments use AWS SSM (no SSH exposure to GitHub Actions)
 - HTTPS enforced in production
 - CSRF protection enabled
 - Secure session cookies in production
+- IAM-based authentication for automated deployments
 
 ## Contributing
 
