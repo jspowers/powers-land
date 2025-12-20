@@ -3,11 +3,14 @@ import json
 import os
 import math
 import time
+import logging
 from flask import session, redirect, url_for, flash
 from functools import wraps
 from app import db
 from app.blueprints.soty.models import Song, Round, Matchup
 from .soty_songs import SOTY_SONGS
+
+logger = logging.getLogger(__name__)
 
 
 # ==============================================================================
@@ -166,6 +169,57 @@ class SOTYTournamentService:
             return f"Round of {participants}"
 
     @staticmethod
+    def _optimize_for_submitter_diversity(pairs):
+        """
+        Try to avoid same-submitter matchups by swapping songs between adjacent pairs.
+
+        Args:
+            pairs: List of [song1, song2] pairs
+
+        Returns:
+            Optimized list of [song1, song2] pairs
+        """
+        # Deep copy to avoid mutations
+        optimized = [pair.copy() for pair in pairs]
+
+        for i in range(len(optimized)):
+            song1, song2 = optimized[i]
+
+            # If same submitter, try to swap
+            if song1.submitter_id == song2.submitter_id:
+                # Try swapping song2 with song1 of next pair
+                if i + 1 < len(optimized):
+                    next_pair = optimized[i + 1]
+
+                    # Test swap: current becomes (song1, next_pair[0]), next becomes (song2, next_pair[1])
+                    if (song1.submitter_id != next_pair[0].submitter_id and
+                        song2.submitter_id != next_pair[1].submitter_id):
+                        # Swap resolves conflict without creating new ones
+                        optimized[i] = [song1, next_pair[0]]
+                        optimized[i + 1] = [song2, next_pair[1]]
+                        continue
+
+                    # Alternative swap: current becomes (song1, next_pair[1]), next becomes (next_pair[0], song2)
+                    if (song1.submitter_id != next_pair[1].submitter_id and
+                        next_pair[0].submitter_id != song2.submitter_id):
+                        optimized[i] = [song1, next_pair[1]]
+                        optimized[i + 1] = [next_pair[0], song2]
+                        continue
+
+                # Try swapping with previous pair if next didn't work
+                if i > 0:
+                    prev_pair = optimized[i - 1]
+
+                    # Test swap: prev becomes (prev_pair[0], song1), current becomes (prev_pair[1], song2)
+                    if (prev_pair[0].submitter_id != song1.submitter_id and
+                        prev_pair[1].submitter_id != song2.submitter_id):
+                        optimized[i - 1] = [prev_pair[0], song1]
+                        optimized[i] = [prev_pair[1], song2]
+                        continue
+
+        return optimized
+
+    @staticmethod
     def generate_matchups(seeded_songs):
         """
         Generate ONLY Round 1 matchups for the tournament bracket.
@@ -187,20 +241,34 @@ class SOTYTournamentService:
 
         # Round 1: Create matchups for non-bye songs
         # Best seeds (lowest seed_numbers) get byes, remaining songs compete in Round 1
-        round_1_matchups = []
         songs_in_round_1 = seeded_songs[num_byes:]  # Skip best N seeds
 
-        # Pair songs: best remaining seed vs worst seed
-        num_round_1_matchups = len(songs_in_round_1) // 2
-        for i in range(num_round_1_matchups):
-            high_seed_song = songs_in_round_1[i]
-            low_seed_song = songs_in_round_1[-(i + 1)]
+        # Step 1: Create initial consecutive pairs (seed 3 vs 4, 5 vs 6, etc.)
+        initial_pairs = []
+        for i in range(0, len(songs_in_round_1), 2):
+            if i + 1 < len(songs_in_round_1):
+                initial_pairs.append([songs_in_round_1[i], songs_in_round_1[i + 1]])
+
+        # Step 2: Optimize for submitter diversity (avoid same-submitter matchups)
+        optimized_pairs = SOTYTournamentService._optimize_for_submitter_diversity(initial_pairs)
+
+        # Step 3: Create matchup objects
+        round_1_matchups = []
+        for i, (song1, song2) in enumerate(optimized_pairs):
+            # Log warning if same submitter (unavoidable)
+            if song1.submitter_id == song2.submitter_id:
+                logger.warning(
+                    f"Unavoidable same-submitter matchup: "
+                    f"Seed {song1.seed_number} ({song1.title}) vs "
+                    f"Seed {song2.seed_number} ({song2.title}) - "
+                    f"Both submitted by user {song1.submitter_id}"
+                )
 
             matchup = Matchup(
                 round_id=round_1.id,
                 position_in_round=i,
-                song1_id=high_seed_song.id,
-                song2_id=low_seed_song.id,
+                song1_id=song1.id,
+                song2_id=song2.id,
                 status='pending'
             )
             db.session.add(matchup)
