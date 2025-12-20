@@ -81,6 +81,7 @@ def load_songs_into_db():
 
         if not existing:
             song = Song(
+                submitter_id=song_data['submitter_id'],
                 spotify_track_id=song_data['spotify_track_id'],
                 apple_music_id=song_data['apple_music_id'],
                 title=song_data['title'],

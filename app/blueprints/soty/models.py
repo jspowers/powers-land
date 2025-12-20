@@ -8,6 +8,7 @@ class Song(Base):
     __tablename__ = 'soty_songs'
 
     id = db.Column(db.Integer, primary_key=True)
+    submitter_id = db.Column(db.Integer, nullable=False, index=True)  # User who submitted the song
     spotify_track_id = db.Column(db.String(50), unique=True, nullable=False, index=True)
     apple_music_id = db.Column(db.String(50), unique=True, index=True)
     title = db.Column(db.String(200), nullable=False)

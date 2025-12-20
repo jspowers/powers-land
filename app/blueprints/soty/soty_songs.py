@@ -1,6 +1,6 @@
 SOTY_SONGS = [
     {
-        "submitter_id": 0,
+        "submitter_id": 2,
         "spotify_track_id": "1Bmszn7gaym9lx8CGrq2SA",
         "title": "All The Way (feat. Bailey Zimmerman)",
         "artist": "BigXthaPlug, Bailey Zimmerman",
@@ -12,7 +12,7 @@ SOTY_SONGS = [
         "apple_music_id": "1802459710",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 6,
         "spotify_track_id": "06vnM67RcfQcc7oPQRA9tP",
         "title": "Diet Pepsi (Live at Sirius XMU)",
         "artist": "Blondshell",
@@ -24,7 +24,7 @@ SOTY_SONGS = [
         "apple_music_id": "1818467226",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 9,
         "spotify_track_id": "45hNb2Uha7uFTSpTWVDGt4",
         "title": "Where The City Can't See",
         "artist": "Blood Cultures",
@@ -36,7 +36,7 @@ SOTY_SONGS = [
         "apple_music_id": "1833119831",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 3,
         "spotify_track_id": "4XosapYiYaXGcxc83p3DD9",
         "title": "Everything Is Peaceful Love",
         "artist": "Bon Iver",
@@ -48,7 +48,7 @@ SOTY_SONGS = [
         "apple_music_id": "1791161236",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 4,
         "spotify_track_id": "5CKp1RqaCeUYDGqo14KMfU",
         "title": "Options",
         "artist": "Cameron Whitcomb",
@@ -60,7 +60,7 @@ SOTY_SONGS = [
         "apple_music_id": "1800569626",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 4,
         "spotify_track_id": "3cZajhyr8LmtPfHZ9296tj",
         "title": "No Broke Boys",
         "artist": "Disco Lines, Tinashe",
@@ -72,7 +72,7 @@ SOTY_SONGS = [
         "apple_music_id": "1818761158",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 3,
         "spotify_track_id": "5jRKYf6UqyjIFf8dagJ9pT",
         "title": "The Love On High",
         "artist": "Electric Guest",
@@ -84,7 +84,7 @@ SOTY_SONGS = [
         "apple_music_id": "1827309202",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 5,
         "spotify_track_id": "1lbNgoJ5iMrMluCyhI4OQP",
         "title": "Victory Lap",
         "artist": "Fred again.., Skepta, Plaqueboymax",
@@ -96,7 +96,7 @@ SOTY_SONGS = [
         "apple_music_id": "1836177113",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 3,
         "spotify_track_id": "2262bWmqomIaJXwCRHr13j",
         "title": "Sailor Song",
         "artist": "Gigi Perez",
@@ -108,7 +108,7 @@ SOTY_SONGS = [
         "apple_music_id": "1770187510",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 4,
         "spotify_track_id": "1fLTi1wA2FPONA5SAIoKJX",
         "title": "Home",
         "artist": "Good Neighbours",
@@ -120,7 +120,7 @@ SOTY_SONGS = [
         "apple_music_id": "1726004708",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 2,
         "spotify_track_id": "7t0ohvf7w4e8VacR124wbA",
         "title": "doing my best",
         "artist": "Hazlett",
@@ -132,7 +132,7 @@ SOTY_SONGS = [
         "apple_music_id": "1789694732",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 5,
         "spotify_track_id": "1QnFKAPgZ7GI9sYITPuYyL",
         "title": "If You Know Me",
         "artist": "Hudson Freeman",
@@ -144,7 +144,7 @@ SOTY_SONGS = [
         "apple_music_id": "1846026269",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 1,
         "spotify_track_id": "2bWlEirBgnK78PY6ITEcZG",
         "title": "Using You",
         "artist": "Jack Van Cleaf",
@@ -156,7 +156,7 @@ SOTY_SONGS = [
         "apple_music_id": "1790934905",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 2,
         "spotify_track_id": "3diMgXk3RxGChNwsAVqyIL",
         "title": "Burn Me",
         "artist": "Jonah Kagen, Sam Barber",
@@ -168,7 +168,7 @@ SOTY_SONGS = [
         "apple_music_id": "1811873211",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 6,
         "spotify_track_id": "6XA6bozZwlowStujsKQoIY",
         "title": "Home - Tom Sharkett Edit",
         "artist": "LCD Soundsystem, Tom Sharkett",
@@ -180,7 +180,7 @@ SOTY_SONGS = [
         "apple_music_id": "1820883301",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 6,
         "spotify_track_id": "73vfMXcXa6iY1E3lpf2fZO",
         "title": "Pussy Palace",
         "artist": "Lily Allen",
@@ -192,7 +192,7 @@ SOTY_SONGS = [
         "apple_music_id": "1846342309",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 10,
         "spotify_track_id": "1cQQB9z7fNQQ2VzSkslt7Y",
         "title": "Current Affairs",
         "artist": "Lorde",
@@ -204,7 +204,7 @@ SOTY_SONGS = [
         "apple_music_id": "1810905315",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 7,
         "spotify_track_id": "2SGj1WdNaTwW00cz9GO1AO",
         "title": "Colorado, TX",
         "artist": "Mah Moud",
@@ -216,7 +216,7 @@ SOTY_SONGS = [
         "apple_music_id": "1822709218",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 9,
         "spotify_track_id": "3OQk21nMrEPnc5KXePcv6E",
         "title": "All I Need",
         "artist": "Maribou State, Andreya Triana",
@@ -228,7 +228,7 @@ SOTY_SONGS = [
         "apple_music_id": "1716588299",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 1,
         "spotify_track_id": "3a73t7XIrNt6i3G4f3hw9E",
         "title": "Mean Streak",
         "artist": "Next of Kin",
@@ -240,7 +240,7 @@ SOTY_SONGS = [
         "apple_music_id": "1785740381",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 7,
         "spotify_track_id": "2P362P669T4HGZQeFVucgO",
         "title": "We Didn’t Know We Were Ready (feat. Niamh Regan & Ye Vagabonds)",
         "artist": "Ólafur Arnalds, Talos, Niamh Regan, Ye Vagabonds",
@@ -252,7 +252,7 @@ SOTY_SONGS = [
         "apple_music_id": "1811135606",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 8,
         "spotify_track_id": "5gGqgnain6yTxQF6UJagqL",
         "title": "Philomene",
         "artist": "Pedro Lima, Os Leononses",
@@ -264,7 +264,7 @@ SOTY_SONGS = [
         "apple_music_id": "1806091136",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 5,
         "spotify_track_id": "7DTE4ib3z3j2syoUnRogPu",
         "title": "Breathing the Same Air",
         "artist": "Petey USA",
@@ -276,7 +276,7 @@ SOTY_SONGS = [
         "apple_music_id": "1818421904",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 9,
         "spotify_track_id": "6ATGoNeKZih1AhZ8Ossy1H",
         "title": "One",
         "artist": "Richy Mitch & The Coal Miners",
@@ -288,7 +288,7 @@ SOTY_SONGS = [
         "apple_music_id": "1818610193",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 7,
         "spotify_track_id": "2TugrDKkd55mfVOMVZsfO8",
         "title": "who’s your boyfriend",
         "artist": "Royel Otis",
@@ -300,7 +300,7 @@ SOTY_SONGS = [
         "apple_music_id": "1820543514",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 10,
         "spotify_track_id": "7qSaRUz9tOTtjzzifPL2Jv",
         "title": "Feelings Gone (feat. London Grammar)",
         "artist": "SG Lewis, London Grammar",
@@ -312,7 +312,7 @@ SOTY_SONGS = [
         "apple_music_id": "1820217698",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 8,
         "spotify_track_id": "3M61o9wFaLaCqixyKx8DC2",
         "title": "No Joy",
         "artist": "The Beths",
@@ -324,7 +324,7 @@ SOTY_SONGS = [
         "apple_music_id": "1817137578",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 10,
         "spotify_track_id": "0k9JIBszlCqCa4SpXI353F",
         "title": "BIRDS",
         "artist": "Turnstile",
@@ -336,7 +336,7 @@ SOTY_SONGS = [
         "apple_music_id": "1805821732",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 1,
         "spotify_track_id": "5dUCixiCL0CcIUdlgUl1ct",
         "title": "Oneida",
         "artist": "Tyler Childers",
@@ -348,7 +348,7 @@ SOTY_SONGS = [
         "apple_music_id": "1818394045",
     },
     {
-        "submitter_id": 0,
+        "submitter_id": 8,
         "spotify_track_id": "5RYBjITAd8YJ24ugbTU4Yr",
         "title": "Chicago Summer",
         "artist": "Vulfmon, Evangeline, Woody Goss",
