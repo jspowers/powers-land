@@ -220,7 +220,7 @@ Automated deployments use **AWS Systems Manager (SSM)** for secure, SSH-free dep
 - **On push to main**: Tests run, then auto-deploy via SSM (no SSH needed)
 - **Manual trigger**: Use "Run workflow" button in Actions tab
 
-**📖 Detailed deployment setup guide**: See [DEPLOYMENT.md](DEPLOYMENT.md)
+**📖 Detailed deployment setup guide**: See [DEPLOYMENT.md](DEPLOYMENT.md) for instructions
 
 ## Database Migrations
 
