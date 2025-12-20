@@ -9,6 +9,7 @@ class Song(Base):
 
     id = db.Column(db.Integer, primary_key=True)
     spotify_track_id = db.Column(db.String(50), unique=True, nullable=False, index=True)
+    apple_music_id = db.Column(db.String(50), unique=True, index=True)
     title = db.Column(db.String(200), nullable=False)
     artist = db.Column(db.String(200), nullable=False)
     album = db.Column(db.String(200))

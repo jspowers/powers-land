@@ -156,13 +156,22 @@
                                 <div class="card-content" style="padding: .2rem;">
                                     <div class="">
                                         <!-- Spotify Player for Bye Songs -->
-                                        {% if song.spotify_track_id %}
+                                        {% if current_user.music_service == "spotify" %}
+
 
                                         <iframe style="border-radius:12px"
                                             src="https://open.spotify.com/embed/track/{{ song.spotify_track_id }}?utm_source=generator&theme=0"
                                             width="100%" height="100" frameBorder="0" allowfullscreen=""
                                             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                            loading="lazy"></iframe>
+                                            loading="lazy">
+                                        </iframe>
+
+                                        {% elif current_user.music_service == "apple" %}
+
+                                        <iframe allow="autoplay *; encrypted-media *;" frameborder="0" height="152"
+                                            style="width:100%;max-width:660px;overflow:hidden;background:transparent;"
+                                            src="https://embed.music.apple.com/us/song/{{ song.apple_music_id }}">
+                                        </iframe>
 
                                         {% endif %}
                                         <p class="help has-text-success">Seed #{{ song.seed_number }} - BYE</p>
@@ -190,7 +199,7 @@
 
 
                                 <!-- Spotify Player -->
-                                {% if m.song1.spotify_track_id %}
+                                {% if current_user.music_service == "spotify" %}
                                 <div class="">
                                     <iframe style="border-radius:12px"
                                         src="https://open.spotify.com/embed/track/{{ m.song1.spotify_track_id }}?utm_source=generator&theme=0"
@@ -198,6 +207,14 @@
                                         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                                         loading="lazy"></iframe>
                                 </div>
+                                {% elif current_user.music_service == "apple" %}
+                                <div class="">
+                                    <iframe allow="autoplay *; encrypted-media *;" frameborder="0" height="152"
+                                        style="width:100%;max-width:660px;overflow:hidden;background:transparent;"
+                                        src="https://embed.music.apple.com/us/song/{{ m.song1.apple_music_id }}">
+                                    </iframe>
+                                </div>
+
                                 {% endif %}
 
                                 {% if rd.is_voting_open and m.song2 %}
@@ -220,7 +237,8 @@
                                     {% endif %}
                                 </div>
                                 {% elif not m.song2 %}
-                                <p class="help has-text-centered mt-2 has-text-success"><strong>BYE ROUND</strong></p>
+                                <p class="help has-text-centered mt-2 has-text-success"><strong>BYE ROUND</strong>
+                                </p>
                                 {% endif %}
                                 {% else %}
                                 <p class="has-text-grey-light">TBD</p>
@@ -239,16 +257,23 @@
                             <!-- Song 2 -->
                             <div class="column is-5 p-1">
                                 {% if m.song2 %}
-                                <p class="mb-1 is-family-monospace">Seed: #{{ m.song1.seed_number }}</p>
+                                <p class="mb-1 is-family-monospace">Seed: #{{ m.song2.seed_number }}</p>
 
                                 <!-- Spotify Player -->
-                                {% if m.song2.spotify_track_id %}
+                                {% if current_user.music_service == "spotify" %}
                                 <div class="">
                                     <iframe style="border-radius:12px"
                                         src="https://open.spotify.com/embed/track/{{ m.song2.spotify_track_id }}?utm_source=generator&theme=0"
                                         width="100%" height="152" frameBorder="0" allowfullscreen=""
                                         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                                         loading="lazy"></iframe>
+                                </div>
+                                {% elif current_user.music_service == "apple" %}
+                                <div class="">
+                                    <iframe allow="autoplay *; encrypted-media *;" frameborder="0" height="152"
+                                        style="width:100%;max-width:660px;overflow:hidden;background:transparent;"
+                                        src="https://embed.music.apple.com/us/song/{{ m.song2.apple_music_id }}">
+                                    </iframe>
                                 </div>
                                 {% endif %}
 

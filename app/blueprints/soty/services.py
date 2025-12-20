@@ -82,6 +82,7 @@ def load_songs_into_db():
         if not existing:
             song = Song(
                 spotify_track_id=song_data['spotify_track_id'],
+                apple_music_id=song_data['apple_music_id'],
                 title=song_data['title'],
                 artist=song_data['artist'],
                 album=song_data.get('album'),
