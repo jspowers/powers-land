@@ -44,10 +44,6 @@ def create_app(config_name='development'):
     app.register_blueprint(landscaping_bp, url_prefix='/landscaping')
     app.register_blueprint(soty_bp, url_prefix='/soty')
 
-    # Register CLI commands
-    from app.blueprints.soty.cli import soty_cli
-    app.register_blueprint(soty_cli)
-
     # Template filters
     @app.template_filter('timestamp_to_date')
     def timestamp_to_date(timestamp):
