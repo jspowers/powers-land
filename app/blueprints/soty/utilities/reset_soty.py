@@ -138,7 +138,10 @@ Examples:
 
     args = parser.parse_args()
 
-    app = create_app()
+
+    # prefer FLASK_ENV if set, otherwise default to production for safety
+    env = os.environ.get('FLASK_ENV', 'production')
+    app = create_app(env)
 
     with app.app_context():
         print("=" * 60)
