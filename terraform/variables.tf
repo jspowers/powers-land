@@ -37,3 +37,17 @@ variable "ssl_email" {
   type        = string
   default     = ""
 }
+
+variable "spotify_client_id" {
+  description = "Spotify API Client ID"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "spotify_client_secret" {
+  description = "Spotify API Client Secret"
+  type        = string
+  sensitive   = true
+  default     = ""
+}

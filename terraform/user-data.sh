@@ -28,12 +28,15 @@ fi
 mkdir -p /var/www/powers-land
 chown powers-land:www-data /var/www/powers-land
 
-# Create .env file
-cat > /var/www/powers-land/.env << EOF
+# Create .env file with strict format (no spaces around =)
+cat > /var/www/powers-land/.env << 'EOF'
 SECRET_KEY=${app_secret_key}
 FLASK_ENV=production
-DATABASE_URL=sqlite:////var/www/powers-land/instance/powers-land.db
+DEV_DATABASE_URL=instance/powers-land-dev.db
+PROD_DATABASE_URL=instance/powers-land.db
 DOMAIN_NAME=${domain_name}
+SPOTIFY_CLIENT_ID=${spotify_client_id}
+SPOTIFY_CLIENT_SECRET=${spotify_client_secret}
 EOF
 
 chown powers-land:www-data /var/www/powers-land/.env
@@ -42,6 +45,11 @@ chmod 640 /var/www/powers-land/.env
 # Create instance directory for database
 mkdir -p /var/www/powers-land/instance
 chown powers-land:www-data /var/www/powers-land/instance
+
+# Create logs directory
+mkdir -p /var/www/powers-land/logs
+chown powers-land:www-data /var/www/powers-land/logs
+chmod 755 /var/www/powers-land/logs
 
 # Clone repository as powers-land user
 sudo -u powers-land bash << 'USEREOF'

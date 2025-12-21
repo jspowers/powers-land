@@ -125,8 +125,10 @@ resource "aws_instance" "web" {
   }
 
   user_data = templatefile("${path.module}/user-data.sh", {
-    domain_name    = var.domain_name
-    app_secret_key = var.app_secret_key
+    domain_name           = var.domain_name
+    app_secret_key        = var.app_secret_key
+    spotify_client_id     = var.spotify_client_id
+    spotify_client_secret = var.spotify_client_secret
   })
 
   tags = {

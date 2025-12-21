@@ -21,8 +21,7 @@ class Config:
 class DevelopmentConfig(Config):
     """Development configuration"""
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'powers-land-dev.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, os.environ.get('DEV_DATABASE_URL'))
     SQLALCHEMY_ECHO = True
 
 class TestingConfig(Config):
@@ -34,7 +33,7 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     """Production configuration"""
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join('/var/www/powers-land/instance', 'powers-land.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, os.environ.get('PROD_DATABASE_URL'))
 
     # Production security settings
     SESSION_COOKIE_SECURE = True
@@ -45,6 +44,9 @@ class ProductionConfig(Config):
         # Ensure SECRET_KEY is set in production
         if not os.environ.get('SECRET_KEY'):
             raise ValueError("SECRET_KEY environment variable must be set in production")
+        # Ensure database URL is set
+        if not os.environ.get('PROD_DATABASE_URL'):
+            raise ValueError("PROD_DATABASE_URL environment variable must be set in production")
         super().__init__()
 
 config = {
