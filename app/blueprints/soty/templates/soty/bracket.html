@@ -32,7 +32,7 @@
 
 {% block content %}
 <section class="section">
-    <div class="container">
+    <div class="container" data-theme="dark">
         <h1 class="title is-1">Tournament Bracket</h1>
 
         <!-- User Info -->
@@ -289,7 +289,7 @@
                                 <button
                                     class="button vote-button is-fullwidth mt-2 {% if m.user_vote == m.song1.id %}is-primary selected{% else %}is-light{% endif %}"
                                     data-matchup-id="{{ m.matchup.id }}" data-song-id="{{ m.song1.id }}">
-                                    Vote for {{ m.song1.title }}
+                                    Vote for {{ m.song1.title|truncate(20, True, '…') }}
                                 </button>
                                 {% endif %}
 
@@ -379,7 +379,7 @@
                                 <button
                                     class="button vote-button is-fullwidth mt-2 {% if m.user_vote == m.song2.id %}is-primary selected{% else %}is-light{% endif %}"
                                     data-matchup-id="{{ m.matchup.id }}" data-song-id="{{ m.song2.id }}">
-                                    Vote for {{ m.song2.title }}
+                                    Vote for {{ m.song2.title|truncate(20, True, '…') }}
                                 </button>
                                 {% endif %}
 
