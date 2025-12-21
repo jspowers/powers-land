@@ -9,6 +9,7 @@ Usage:
 """
 import sys
 import argparse
+import os
 from app import create_app, db
 from app.blueprints.soty.models import Song, Round, Matchup, Vote
 from app.blueprints.soty.services import load_songs_into_db
